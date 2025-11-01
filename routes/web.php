@@ -3,6 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 
+// Static pages
+Route::view('/tentang', 'pages.tentang')->name('tentang');
+Route::view('/wahana', 'pages.wahana')->name('wahana');
+Route::view('/berita', 'pages.berita')->name('berita');
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
