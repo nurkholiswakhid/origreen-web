@@ -12,6 +12,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call([
+            BannerSeeder::class,
+            AboutSeeder::class,
+            FacilitySeeder::class,
+            NewsSeeder::class,
+            TestimonialSeeder::class,
+            MapSettingSeeder::class,
+            FaqSeeder::class,
+        ]);
 
         $adminData = [
             'name' => 'Test User',
