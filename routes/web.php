@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\AboutController;
 use App\Http\Controllers\Admin\FacilityController;
+use App\Http\Controllers\Admin\ImageController;
 
 // Public Routes
 Route::get('/', [WelcomeController::class, 'index']);
@@ -35,6 +36,9 @@ Route::get('/', [WelcomeController::class, 'index']);
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+    // Image Upload Route
+    Route::post('/upload-image', [ImageController::class, 'upload'])->name('admin.upload-image');
 
     // Banner Routes
     Route::get('/banner/edit', [BannerController::class, 'edit'])->name('admin.banner.edit');

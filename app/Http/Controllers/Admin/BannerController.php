@@ -19,7 +19,7 @@ class BannerController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image_url' => 'required|url',
+            'image_url' => 'required|string',
             'button1_text' => 'required|string|max:255',
             'button1_url' => 'required|string|max:255',
             'button2_text' => 'required|string|max:255',
