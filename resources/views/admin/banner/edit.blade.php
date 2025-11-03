@@ -3,20 +3,36 @@
 @section('title', 'Edit Banner')
 
 @push('styles')
-<style>
-    textarea#description {
-        min-height: 200px;
-        resize: vertical;
-    }
-</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
 @endpush
+
+
+
+@push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
+<script>
+    $(function() {
+        $('#description').summernote({
+            placeholder: 'Tulis deskripsi banner di sini...',
+            height: 250,
+            tabsize: 2,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['fontsize', 'color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+</script>
+@endpush
+
 
 @section('content')
 <div class="mb-6 flex justify-between items-center">
     <h1 class="text-2xl font-bold text-gray-800">Edit Banner</h1>
-    <a href="{{ url('/') }}" target="_blank" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
-        <i class="fas fa-eye mr-2"></i>Lihat Website
-    </a>
 </div>
 
 <div class="bg-white rounded-lg shadow-md">
@@ -25,6 +41,7 @@
             @csrf
             @method('PUT')
 
+            <!-- Judul Banner -->
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
                     Judul Banner
@@ -37,17 +54,19 @@
                 @enderror
             </div>
 
+            <!-- Deskripsi dengan Summernote -->
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
-                    Deskripsi
-                </label>
-                <textarea name="description" id="description" rows="8"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{!! old('description', $banner->description) !!}</textarea>
-                @error('description')
-                    <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                @enderror
-            </div>
-
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+        Deskripsi
+    </label>
+    <textarea name="description" id="description">
+        {!! old('description', $banner->description) !!}
+    </textarea>
+    @error('description')
+        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+    @enderror
+</div>
+            <!-- Upload Gambar -->
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="image">
                     Gambar Banner
@@ -110,6 +129,7 @@
             }
             </script>
 
+            <!-- Tombol -->
             <div class="grid grid-cols-2 gap-4">
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="button1_text">
@@ -148,6 +168,7 @@
                 </div>
             </div>
 
+            <!-- Tombol Submit -->
             <div class="flex items-center justify-end">
                 <button type="submit"
                         class="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors">
@@ -156,6 +177,5 @@
             </div>
         </form>
     </div>
-</div>
 </div>
 @endsection

@@ -19,9 +19,13 @@
             }
         }
     </script>
+
     <style>
         [x-cloak] { display: none !important; }
     </style>
+
+    {{-- Tambahkan ini agar halaman lain bisa menambah CSS seperti Summernote --}}
+    @stack('styles')
 </head>
 <body class="bg-gray-100">
     <div x-data="{ sidebarOpen: false }">
@@ -32,7 +36,7 @@
             :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}">
             <div class="flex flex-col h-full">
                 <!-- Sidebar Header -->
-                <div class="h-16"></div> <!-- Spacer for navbar -->
+                <div class="h-16"></div>
 
                 <!-- Sidebar Content -->
                 <nav class="flex-1 px-4 py-4 space-y-2">
@@ -64,5 +68,8 @@
     </div>
 
     <script src="//unpkg.com/alpinejs" defer></script>
+
+    {{-- Tambahkan ini agar halaman bisa menambah JS seperti Summernote --}}
+    @stack('scripts')
 </body>
 </html>
