@@ -2,78 +2,13 @@
 
 @section('title', 'Edit Banner')
 
-@push('scripts')
-<script src="https://cdn.tiny.cloud/1/guezyx1f1bttzpfenpe72isge9aqgdon3yh1xik229g89vs2/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
-<script>
-    tinymce.init({
-        selector: '#description',
-        height: 400,
-        menubar: true,
-        plugins: [
-            // Core editing features
-            'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists',
-            'media', 'searchreplace', 'table', 'visualblocks', 'wordcount', 'image',
-            // Premium features
-            'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed',
-            'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste',
-            'advtable', 'advcode', 'advtemplate', 'ai', 'mentions', 'tinycomments',
-            'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography',
-            'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
-        ],
-        images_upload_url: '{{ route("admin.upload-image") }}',
-        images_upload_credentials: true,
-        automatic_uploads: true,
-        images_reuse_filename: true,
-        images_upload_handler: function (blobInfo, success, failure, progress) {
-            var xhr, formData;
-            xhr = new XMLHttpRequest();
-            xhr.withCredentials = false;
-            xhr.open('POST', '{{ route("admin.upload-image") }}');
-            xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-
-            xhr.upload.onprogress = function (e) {
-                progress(e.loaded / e.total * 100);
-            };
-
-            xhr.onload = function() {
-                var json;
-                if (xhr.status === 403) {
-                    failure('HTTP Error: ' + xhr.status, { remove: true });
-                    return;
-                }
-                if (xhr.status < 200 || xhr.status >= 300) {
-                    failure('HTTP Error: ' + xhr.status);
-                    return;
-                }
-                json = JSON.parse(xhr.responseText);
-                if (!json || typeof json.location != 'string') {
-                    failure('Invalid JSON: ' + xhr.responseText);
-                    return;
-                }
-                success(json.location);
-            };
-
-            xhr.onerror = function () {
-                failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-            };
-
-            formData = new FormData();
-            formData.append('image', blobInfo.blob(), blobInfo.filename());
-
-            xhr.send(formData);
-        },
-        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | ' +
-                'link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | ' +
-                'align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-        file_picker_types: 'image',
-        tinycomments_mode: 'embedded',
-        tinycomments_author: 'Admin',
-        content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }',
-        branding: false,
-        promotion: false,
-        ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('AI Assistant not configured')),
-    });
-</script>
+@push('styles')
+<style>
+    textarea#description {
+        min-height: 200px;
+        resize: vertical;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -106,8 +41,8 @@
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
                     Deskripsi
                 </label>
-                <textarea name="description" id="description" rows="4"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{{ old('description', $banner->description) }}</textarea>
+                <textarea name="description" id="description" rows="8"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">{!! old('description', $banner->description) !!}</textarea>
                 @error('description')
                     <p class="text-red-500 text-xs italic">{{ $message }}</p>
                 @enderror
