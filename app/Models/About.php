@@ -10,9 +10,13 @@ class About extends Model
         'title',
         'image_url',
         'subtitle',
-        'description1',
-        'description2',
+        'description',
         'stats_visitor',
         'stats_rating',
+    ];
+
+    protected $casts = [
+        'stats_visitor' => 'json',
+        'stats_rating' => 'json',
     ];
 }

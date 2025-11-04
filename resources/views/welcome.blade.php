@@ -49,23 +49,29 @@
                 </div>
                 <div>
                     <h3 class="text-3xl font-bold text-gray-800 mb-6">{{ $about->subtitle }}</h3>
-                    <p class="text-gray-600 mb-4 leading-relaxed">
-                        {{ $about->description1 }}
-                    </p>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
-                        {{ $about->description2 }}
-                    </p>
+                    <div class="prose prose-lg max-w-none text-gray-600 mb-6">
+                        {!! $about->description !!}
+                    </div>
 
-                    <div class="grid grid-cols-2 gap-6">
+
+                                            <div class="grid grid-cols-2 gap-6">
                         <div class="text-center p-6 bg-white rounded-xl shadow-md">
-                            <i class="fas fa-users text-4xl text-primary mb-3"></i>
-                            <h4 class="text-2xl font-bold text-gray-800">{{ $about->stats_visitor }}</h4>
-                            <p class="text-gray-600">Pengunjung</p>
+                            @if(isset($about->stats_visitor['icon']) && isset($about->stats_visitor['color']))
+                                <i class="{{ $about->stats_visitor['icon'] }} text-4xl mb-3" style="color: {{ $about->stats_visitor['color'] }}"></i>
+                            @else
+                                <i class="fas fa-users text-4xl text-primary mb-3"></i>
+                            @endif
+                            <h4 class="text-2xl font-bold text-gray-800">{{ $about->stats_visitor['value'] ?? '0' }}</h4>
+                            <p class="text-gray-600">{{ $about->stats_visitor['title'] ?? 'Pengunjung' }}</p>
                         </div>
                         <div class="text-center p-6 bg-white rounded-xl shadow-md">
-                            <i class="fas fa-award text-4xl text-primary mb-3"></i>
-                            <h4 class="text-2xl font-bold text-gray-800">{{ $about->stats_rating }}</h4>
-                            <p class="text-gray-600">Rating</p>
+                            @if(isset($about->stats_rating['icon']) && isset($about->stats_rating['color']))
+                                <i class="{{ $about->stats_rating['icon'] }} text-4xl mb-3" style="color: {{ $about->stats_rating['color'] }}"></i>
+                            @else
+                                <i class="fas fa-star text-4xl text-yellow-400 mb-3"></i>
+                            @endif
+                            <h4 class="text-2xl font-bold text-gray-800">{{ $about->stats_rating['value'] ?? '0' }}</h4>
+                            <p class="text-gray-600">{{ $about->stats_rating['title'] ?? 'Rating' }}</p>
                         </div>
                     </div>
                 </div>
