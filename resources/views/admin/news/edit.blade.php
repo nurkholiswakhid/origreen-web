@@ -52,19 +52,19 @@
                         <label class="block text-sm font-semibold text-gray-700">Gambar Berita</label>
                         <div class="relative">
                             <!-- Hidden file input -->
-                            <input type="file" 
-                                   id="image" 
-                                   name="image" 
+                            <input type="file"
+                                   id="image"
+                                   name="image"
                                    accept="image/*"
-                                   class="hidden" 
+                                   class="hidden"
                                    onchange="handleImageUpload(this)">
-                            
+
                             <!-- Hidden image_url input -->
-                            <input type="hidden" 
-                                   id="image_url" 
-                                   name="image_url" 
+                            <input type="hidden"
+                                   id="image_url"
+                                   name="image_url"
                                    value="{{ old('image_url', $news->image_url) }}">
-                            
+
                             <!-- Upload Area -->
                             <div class="group cursor-pointer relative" onclick="document.getElementById('image').click()">
                                 <!-- Preview Container -->
@@ -78,7 +78,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Upload Placeholder -->
                                 <div id="upload-placeholder" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors duration-300">
                                     <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
@@ -214,7 +214,7 @@
     // Handle drag and drop
     function setupDragAndDrop() {
         const dropZone = document.getElementById('upload-placeholder');
-        
+
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, preventDefaults, false);
         });
@@ -264,7 +264,7 @@
             const preview = document.getElementById('image-preview');
             const placeholder = document.getElementById('upload-placeholder');
             const img = preview.querySelector('img');
-            
+
             img.src = imageUrl;
             preview.classList.remove('hidden');
             placeholder.classList.add('hidden');

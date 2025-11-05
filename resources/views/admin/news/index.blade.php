@@ -8,7 +8,7 @@
         <h1 class="text-2xl font-bold text-gray-800">Kelola Berita</h1>
         <p class="text-gray-600 mt-1">Manajemen konten berita dan artikel</p>
     </div>
-    <a href="{{ route('admin.news.create') }}" 
+    <a href="{{ route('admin.news.create') }}"
        class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg">
         <i class="fas fa-plus"></i>
         <span>Tambah Berita</span>
@@ -32,7 +32,7 @@
                     <td class="px-6 py-4">
                         <div class="flex items-start space-x-4">
                             @if($item->image_url)
-                                <img src="{{ $item->image_url }}" alt="{{ $item->title }}" 
+                                <img src="{{ $item->image_url }}" alt="{{ $item->title }}"
                                      class="w-20 h-20 object-cover rounded-lg shadow-sm">
                             @else
                                 <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -50,7 +50,7 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <button onclick="previewNews({{ json_encode($item) }})" 
+                        <button onclick="previewNews({{ json_encode($item) }})"
                                 class="text-primary hover:text-secondary transition-colors">
                             <i class="fas fa-eye mr-2"></i>Lihat Preview
                         </button>
@@ -61,7 +61,7 @@
                                 $now = now();
                                 $isPublished = $item->published_at <= $now;
                             @endphp
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                 {{ $isPublished ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                 <i class="fas fa-circle text-xs mr-1"></i>
                                 {{ $isPublished ? 'Dipublikasi' : 'Dijadwalkan' }}
@@ -126,13 +126,13 @@ function previewNews(news) {
     let html = `
         <div class="space-y-6">
             ${news.image_url ? `
-                <img src="${news.image_url}" alt="${news.title}" 
+                <img src="${news.image_url}" alt="${news.title}"
                      class="w-full max-h-96 object-cover rounded-lg shadow-lg">
             ` : ''}
-            
+
             <div class="space-y-4">
                 <h2 class="text-2xl font-bold text-gray-800">${news.title}</h2>
-                
+
                 <div class="flex items-center space-x-4 text-sm text-gray-600">
                     <span>
                         <i class="far fa-calendar-alt mr-2"></i>
