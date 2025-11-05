@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FacilityController extends Controller
 {
@@ -24,13 +25,39 @@ class FacilityController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'icon' => 'required|string|max:255',
+            'display_type' => 'required|in:image,icon',
+            'icon' => 'nullable|string|max:255',
+            'main_icon' => 'required_if:display_type,icon|nullable|string|max:255',
+            'image' => 'required_if:display_type,image|image|mimes:jpeg,png,jpg,gif|max:2048',
             'duration' => 'nullable|string|max:255',
             'type' => 'required|in:wahana,fasilitas',
-            'order' => 'required|integer|min:0',
+            'order' => 'nullable|integer|min:0',
         ]);
 
-        Facility::create($request->all());
+        $data = $request->except(['image', '_token']);
+
+        // Set default order if not provided
+        if (!isset($data['order'])) {
+            $data['order'] = Facility::max('order') + 1;
+        }
+
+        // Handle display type selection
+        if ($request->display_type === 'image') {
+            $data['main_icon'] = null; // Clear main_icon when using image
+
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('facilities', $filename, 'public');
+                $data['image_url'] = $path;
+            }
+        } else {
+            $data['main_icon'] = $request->input('main_icon'); // Set main_icon for icon type
+            $data['image_url'] = null; // Clear image_url when using icon
+        }
+
+        // Create the facility
+        $facility = Facility::create($data);
 
         return redirect()->route('admin.facilities.index')
             ->with('success', 'Wahana/Fasilitas berhasil ditambahkan');
@@ -46,13 +73,48 @@ class FacilityController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'icon' => 'required|string|max:255',
+            'display_type' => 'required|in:image,icon',
+            'icon' => 'nullable|string|max:255',
+            'main_icon' => 'required_if:display_type,icon|nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'duration' => 'nullable|string|max:255',
             'type' => 'required|in:wahana,fasilitas',
             'order' => 'required|integer|min:0',
+            'is_active' => 'required|boolean',
         ]);
 
-        $facility->update($request->all());
+        $data = $request->except(['image', '_token', '_method']);
+
+        // Handle changes based on display type
+        if ($request->display_type === 'image') {
+            // Switching to or staying in image mode
+            $data['main_icon'] = null; // Clear main_icon when using image
+
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($facility->image_url && Storage::disk('public')->exists($facility->image_url)) {
+                    Storage::disk('public')->delete($facility->image_url);
+                }
+
+                // Store new image
+                $file = $request->file('image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('facilities', $filename, 'public');
+                $data['image_url'] = $path;
+            }
+        } else {
+            // Switching to icon mode
+            $data['main_icon'] = $request->input('main_icon');
+
+            // Delete old image if exists
+            if ($facility->image_url && Storage::disk('public')->exists($facility->image_url)) {
+                Storage::disk('public')->delete($facility->image_url);
+            }
+            $data['image_url'] = null;
+        }
+
+        // Update the facility with all changes
+        $facility->update($data);
 
         return redirect()->route('admin.facilities.index')
             ->with('success', 'Wahana/Fasilitas berhasil diperbarui');
@@ -60,6 +122,10 @@ class FacilityController extends Controller
 
     public function destroy(Facility $facility)
     {
+        // Delete associated media first
+        $facility->clearMediaCollection('image');
+
+        // Delete the facility
         $facility->delete();
 
         return redirect()->route('admin.facilities.index')
@@ -74,5 +140,35 @@ class FacilityController extends Controller
 
         return redirect()->route('admin.facilities.index')
             ->with('success', 'Status wahana/fasilitas berhasil diperbarui');
+    }
+
+    public function move(Request $request, Facility $facility)
+    {
+        $direction = $request->direction;
+
+        if ($direction === 'up') {
+            $previousFacility = Facility::where('order', '<', $facility->order)
+                ->orderBy('order', 'desc')
+                ->first();
+
+            if ($previousFacility) {
+                $tempOrder = $previousFacility->order;
+                $previousFacility->update(['order' => $facility->order]);
+                $facility->update(['order' => $tempOrder]);
+            }
+        } else {
+            $nextFacility = Facility::where('order', '>', $facility->order)
+                ->orderBy('order')
+                ->first();
+
+            if ($nextFacility) {
+                $tempOrder = $nextFacility->order;
+                $nextFacility->update(['order' => $facility->order]);
+                $facility->update(['order' => $tempOrder]);
+            }
+        }
+
+        return redirect()->route('admin.facilities.index')
+            ->with('success', 'Urutan wahana/fasilitas berhasil diperbarui');
     }
 }

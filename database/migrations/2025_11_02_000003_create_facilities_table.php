@@ -11,10 +11,13 @@ return new class extends Migration
         Schema::create('facilities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
-            $table->string('icon')->default('fas fa-tree'); // Font Awesome icon class
-            $table->string('duration')->nullable(); // e.g., "2-3 jam"
-            $table->string('type')->default('wahana'); // wahana atau fasilitas
+            $table->text('description');
+            $table->enum('display_type', ['image', 'icon'])->default('icon');
+            $table->string('icon')->nullable();
+            $table->string('main_icon')->nullable();
+            $table->string('image_url')->nullable();
+            $table->string('duration')->nullable();
+            $table->enum('type', ['wahana', 'fasilitas'])->default('wahana');
             $table->boolean('is_active')->default(true);
             $table->integer('order')->default(0);
             $table->timestamps();

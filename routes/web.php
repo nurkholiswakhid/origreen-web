@@ -59,6 +59,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::put('/facilities/{facility}', [FacilityController::class, 'update'])->name('admin.facilities.update');
     Route::delete('/facilities/{facility}', [FacilityController::class, 'destroy'])->name('admin.facilities.destroy');
     Route::put('/facilities/{facility}/toggle', [FacilityController::class, 'toggle'])->name('admin.facilities.toggle');
+    Route::put('/facilities/{facility}/move', [FacilityController::class, 'move'])->name('admin.facilities.move');
 
     // Testimonial Routes
     Route::get('/testimonials', [TestimonialController::class, 'index'])->name('admin.testimonials.index');
