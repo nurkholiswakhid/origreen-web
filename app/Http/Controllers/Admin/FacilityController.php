@@ -142,33 +142,18 @@ class FacilityController extends Controller
             ->with('success', 'Status wahana/fasilitas berhasil diperbarui');
     }
 
-    public function move(Request $request, Facility $facility)
+    public function reorder(Request $request)
     {
-        $direction = $request->direction;
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:facilities,id',
+            'items.*.order' => 'required|integer|min:1'
+        ]);
 
-        if ($direction === 'up') {
-            $previousFacility = Facility::where('order', '<', $facility->order)
-                ->orderBy('order', 'desc')
-                ->first();
-
-            if ($previousFacility) {
-                $tempOrder = $previousFacility->order;
-                $previousFacility->update(['order' => $facility->order]);
-                $facility->update(['order' => $tempOrder]);
-            }
-        } else {
-            $nextFacility = Facility::where('order', '>', $facility->order)
-                ->orderBy('order')
-                ->first();
-
-            if ($nextFacility) {
-                $tempOrder = $nextFacility->order;
-                $nextFacility->update(['order' => $facility->order]);
-                $facility->update(['order' => $tempOrder]);
-            }
+        foreach ($request->items as $item) {
+            Facility::where('id', $item['id'])->update(['order' => $item['order']]);
         }
 
-        return redirect()->route('admin.facilities.index')
-            ->with('success', 'Urutan wahana/fasilitas berhasil diperbarui');
+        return response()->json(['success' => true]);
     }
 }

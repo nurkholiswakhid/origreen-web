@@ -32,6 +32,7 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead>
                 <tr class="bg-gray-50 border-b border-gray-100">
+                    <th class="w-14"></th>
                     <th class="px-6 py-4 text-sm font-medium text-gray-600">Urutan</th>
                     <th class="px-6 py-4 text-sm font-medium text-gray-600">Tampilan</th>
                     <th class="px-6 py-4 text-sm font-medium text-gray-600">Nama & Deskripsi</th>
@@ -41,29 +42,16 @@
                     <th class="px-6 py-4 text-right text-sm font-medium text-gray-600">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white divide-y divide-gray-200" id="sortable-facilities">
                 @foreach($facilities as $facility)
-                    <tr class="{{ !$facility->is_active ? 'bg-gray-50' : '' }}">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div class="flex items-center space-x-2">
-                                <span class="w-8 text-center">{{ $facility->order }}</span>
-                                <div class="flex flex-col space-y-1">
-                                    <form action="{{ route('admin.facilities.move', ['facility' => $facility->id, 'direction' => 'up']) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed" {{ $loop->first ? 'disabled' : '' }}>
-                                            <i class="fas fa-chevron-up text-xs"></i>
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('admin.facilities.move', ['facility' => $facility->id, 'direction' => 'down']) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed" {{ $loop->last ? 'disabled' : '' }}>
-                                            <i class="fas fa-chevron-down text-xs"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                    <tr class="{{ !$facility->is_active ? 'bg-gray-50' : '' }} hover:bg-gray-50 transition-colors duration-200" data-id="{{ $facility->id }}">
+                        <td class="w-14 px-4">
+                            <div class="cursor-move text-gray-400 hover:text-gray-600 transition-colors duration-200 flex items-center justify-center">
+                                <i class="fas fa-grip-vertical text-lg"></i>
                             </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg font-medium">{{ $facility->order }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex flex-col items-center gap-2">
@@ -157,3 +145,70 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('sortable-facilities');
+    var sortable = new Sortable(el, {
+        animation: 150,
+        handle: '.cursor-move',
+        ghostClass: 'bg-gray-100',
+        onEnd: function(evt) {
+            const items = [...evt.to.children].map((tr, index) => ({
+                id: tr.dataset.id,
+                order: index + 1
+            }));
+
+            // Perbarui tampilan urutan
+            items.forEach(item => {
+                const tr = document.querySelector(`tr[data-id="${item.id}"]`);
+                const orderSpan = tr.querySelector('td:nth-child(2) span');
+                orderSpan.textContent = item.order;
+            });
+
+            // Kirim data ke server
+            fetch('{{ route('admin.facilities.reorder') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ items })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Tampilkan notifikasi sukses jika ada
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Urutan wahana & fasilitas berhasil diperbarui',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            toast: true,
+                            position: 'top-end'
+                        });
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Tampilkan notifikasi error jika ada
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Terjadi kesalahan saat memperbarui urutan',
+                        toast: true,
+                        position: 'top-end'
+                    });
+                }
+            });
+        }
+    });
+});
+</script>
+@endpush

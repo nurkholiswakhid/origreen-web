@@ -4,18 +4,41 @@
 
 @section('content')
 <div class="flex justify-between items-center mb-6">
-    <div>
-        <h1 class="text-2xl font-bold text-gray-800">Kelola Berita</h1>
-        <p class="text-gray-600 mt-1">Manajemen konten berita dan artikel</p>
+    <div class="animate-fade-in">
+        <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <i class="fas fa-newspaper text-primary"></i>
+            Kelola Berita
+        </h1>
+        <p class="text-gray-600 mt-1 flex items-center gap-2">
+            <span class="inline-block w-2 h-2 bg-primary rounded-full"></span>
+            Manajemen konten berita dan artikel
+        </p>
     </div>
     <a href="{{ route('admin.news.create') }}"
-       class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg">
-        <i class="fas fa-plus"></i>
-        <span>Tambah Berita</span>
+       class="bg-primary text-white px-6 py-3 rounded-xl hover:bg-secondary transition-all duration-300 transform hover:scale-105 hover:rotate-1 flex items-center gap-3 shadow-lg group">
+        <i class="fas fa-plus transform group-hover:rotate-180 transition-transform duration-300"></i>
+        <span class="font-semibold">Tambah Berita</span>
     </a>
 </div>
 
-<div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+<div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 transform hover:shadow-xl transition-all duration-300">
+    <div class="p-4 bg-gray-50 border-b border-gray-100">
+        <div class="flex items-center gap-4">
+            <div class="relative flex-1">
+                <input type="text"
+                       id="searchInput"
+                       placeholder="Cari berita..."
+                       class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all duration-300">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+            <select id="statusFilter"
+                    class="px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all duration-300 cursor-pointer">
+                <option value="all">Semua Status</option>
+                <option value="published">Dipublikasi</option>
+                <option value="scheduled">Dijadwalkan</option>
+            </select>
+        </div>
+    </div>
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -117,30 +140,60 @@
     </div>
 </div>
 
+<style>
+    @keyframes slideIn {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-slide-in {
+        animation: slideIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
+    .hover-trigger .hover-target {
+        transition: all 0.3s ease;
+    }
+    .hover-trigger:hover .hover-target {
+        transform: scale(1.05);
+    }
+</style>
+
 <script>
 function previewNews(news) {
     const modal = document.getElementById('previewModal');
     const content = document.getElementById('previewContent');
 
-    // Create preview content
+    // Create preview content with enhanced styling
     let html = `
-        <div class="space-y-6">
+        <div class="space-y-6 animate-slide-in">
             ${news.image_url ? `
-                <img src="${news.image_url}" alt="${news.title}"
-                     class="w-full max-h-96 object-cover rounded-lg shadow-lg">
+                <div class="relative overflow-hidden rounded-xl shadow-xl hover-trigger">
+                    <img src="${news.image_url}" alt="${news.title}"
+                         class="w-full max-h-96 object-cover hover-target">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
             ` : ''}
 
             <div class="space-y-4">
-                <h2 class="text-2xl font-bold text-gray-800">${news.title}</h2>
+                <h2 class="text-3xl font-bold text-gray-800 border-l-4 border-primary pl-4">${news.title}</h2>
 
-                <div class="flex items-center space-x-4 text-sm text-gray-600">
-                    <span>
-                        <i class="far fa-calendar-alt mr-2"></i>
+                <div class="flex items-center gap-4 text-sm text-gray-600">
+                    <span class="flex items-center bg-gray-100 px-3 py-1.5 rounded-full">
+                        <i class="far fa-calendar-alt mr-2 text-primary"></i>
                         ${new Date(news.published_at).toLocaleDateString('id-ID', {
                             day: 'numeric',
                             month: 'long',
                             year: 'numeric'
                         })}
+                    </span>
+                    <span class="flex items-center bg-gray-100 px-3 py-1.5 rounded-full">
+                        <i class="far fa-clock mr-2 text-primary"></i>
+                        ${new Date(news.published_at).toLocaleTimeString('id-ID')}
                     </span>
                 </div>
 
@@ -155,20 +208,65 @@ function previewNews(news) {
     modal.classList.remove('hidden');
     modal.classList.add('flex');
     document.body.classList.add('overflow-hidden');
+
+    // Add fade in animation to modal
+    modal.querySelector('.bg-white').classList.add('animate-slide-in');
 }
 
 function closePreviewModal() {
     const modal = document.getElementById('previewModal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    document.body.classList.remove('overflow-hidden');
+    const modalContent = modal.querySelector('.bg-white');
+
+    modalContent.style.transform = 'translateY(20px)';
+    modalContent.style.opacity = '0';
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.classList.remove('overflow-hidden');
+        modalContent.style.transform = '';
+        modalContent.style.opacity = '';
+    }, 200);
 }
 
-// Close modal when clicking outside
-document.getElementById('previewModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closePreviewModal();
+// Enhanced table interactivity
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const tableRows = document.querySelectorAll('tbody tr');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusTerm = statusFilter.value;
+
+        tableRows.forEach(row => {
+            const title = row.querySelector('.text-gray-900').textContent.toLowerCase();
+            const excerpt = row.querySelector('.text-gray-500').textContent.toLowerCase();
+            const status = row.querySelector('.inline-flex').textContent.trim();
+
+            const matchesSearch = title.includes(searchTerm) || excerpt.includes(searchTerm);
+            const matchesStatus = statusTerm === 'all' ||
+                                (statusTerm === 'published' && status === 'Dipublikasi') ||
+                                (statusTerm === 'scheduled' && status === 'Dijadwalkan');
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = '';
+                row.classList.add('animate-fade-in');
+            } else {
+                row.style.display = 'none';
+            }
+        });
     }
+
+    searchInput.addEventListener('input', filterTable);
+    statusFilter.addEventListener('change', filterTable);
+
+    // Close modal when clicking outside
+    document.getElementById('previewModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePreviewModal();
+        }
+    });
 });
 </script>
 @endsection

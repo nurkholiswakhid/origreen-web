@@ -59,7 +59,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::put('/facilities/{facility}', [FacilityController::class, 'update'])->name('admin.facilities.update');
     Route::delete('/facilities/{facility}', [FacilityController::class, 'destroy'])->name('admin.facilities.destroy');
     Route::put('/facilities/{facility}/toggle', [FacilityController::class, 'toggle'])->name('admin.facilities.toggle');
-    Route::put('/facilities/{facility}/move', [FacilityController::class, 'move'])->name('admin.facilities.move');
+    Route::post('/facilities/reorder', [FacilityController::class, 'reorder'])->name('admin.facilities.reorder');
 
     // Testimonial Routes
     Route::get('/testimonials', [TestimonialController::class, 'index'])->name('admin.testimonials.index');
@@ -82,6 +82,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::put('/faqs/{faq}', [FaqController::class, 'update'])->name('admin.faqs.update');
     Route::delete('/faqs/{faq}', [FaqController::class, 'destroy'])->name('admin.faqs.destroy');
     Route::put('/faqs/{faq}/toggle', [FaqController::class, 'toggle'])->name('admin.faqs.toggle');
+    Route::post('/faqs/reorder', [FaqController::class, 'reorder'])->name('admin.faqs.reorder');
 });
 // Auth Routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

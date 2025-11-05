@@ -69,4 +69,19 @@ class FaqController extends Controller
         return redirect()->route('admin.faqs.index')
             ->with('success', 'Status FAQ berhasil diperbarui');
     }
+
+    public function reorder(Request $request)
+    {
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'required|exists:faqs,id',
+            'items.*.order' => 'required|integer|min:1'
+        ]);
+
+        foreach ($request->items as $item) {
+            Faq::where('id', $item['id'])->update(['order' => $item['order']]);
+        }
+
+        return response()->json(['success' => true]);
+    }
 }
