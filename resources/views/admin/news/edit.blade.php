@@ -49,21 +49,55 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label for="image_url" class="block text-sm font-semibold text-gray-700">Gambar Berita</label>
-                        <input type="url"
-                               id="image_url"
-                               name="image_url"
-                               value="{{ old('image_url', $news->image_url) }}"
-                               class="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-all duration-300 @error('image_url') border-red-500 @enderror"
-                               placeholder="https://example.com/image.jpg"
-                               oninput="previewImage(this.value)"
-                               required>
+                        <label class="block text-sm font-semibold text-gray-700">Gambar Berita</label>
+                        <div class="relative">
+                            <!-- Hidden file input -->
+                            <input type="file" 
+                                   id="image" 
+                                   name="image" 
+                                   accept="image/*"
+                                   class="hidden" 
+                                   onchange="handleImageUpload(this)">
+                            
+                            <!-- Hidden image_url input -->
+                            <input type="hidden" 
+                                   id="image_url" 
+                                   name="image_url" 
+                                   value="{{ old('image_url', $news->image_url) }}">
+                            
+                            <!-- Upload Area -->
+                            <div class="group cursor-pointer relative" onclick="document.getElementById('image').click()">
+                                <!-- Preview Container -->
+                                <div id="image-preview" class="hidden">
+                                    <div class="relative">
+                                        <img src="" alt="Preview" class="w-full h-48 rounded-lg object-cover">
+                                        <div class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
+                                            <span class="text-white text-sm">
+                                                <i class="fas fa-camera mr-2"></i>Ganti Gambar
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Upload Placeholder -->
+                                <div id="upload-placeholder" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors duration-300">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                                    <div class="text-sm text-gray-600">
+                                        <p class="font-semibold">Klik untuk upload gambar</p>
+                                        <p class="text-gray-500 text-xs mt-1">atau drag and drop</p>
+                                        <p class="text-gray-400 text-xs mt-2">PNG, JPG, GIF (Maks. 2MB)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Loading Indicator -->
+                            <div id="loading-indicator" class="hidden absolute inset-0 bg-white bg-opacity-90 rounded-lg flex items-center justify-center">
+                                <div class="animate-spin rounded-full h-8 w-8 border-4 border-primary border-t-transparent"></div>
+                            </div>
+                        </div>
                         @error('image_url')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
-                        <div id="image-preview" class="mt-2 hidden">
-                            <img src="" alt="Preview" class="max-w-full h-40 rounded-lg object-cover">
-                        </div>
                     </div>
 
                     <div>
@@ -129,31 +163,113 @@
         document.querySelector('#content').value = quill.root.innerHTML;
     };
 
-    // Image preview function
-    function previewImage(url) {
+    // Handle file upload
+    function handleImageUpload(input) {
         const preview = document.getElementById('image-preview');
+        const placeholder = document.getElementById('upload-placeholder');
+        const loadingIndicator = document.getElementById('loading-indicator');
         const img = preview.querySelector('img');
 
-        if (url && url.trim() !== '') {
-            img.src = url;
-            img.onerror = function() {
-                preview.classList.add('hidden');
-            };
-            img.onload = function() {
-                preview.classList.remove('hidden');
-            };
-        } else {
+        if (input.files && input.files[0]) {
+            // Size validation (2MB)
+            if (input.files[0].size > 2 * 1024 * 1024) {
+                alert('Ukuran file terlalu besar. Maksimal 2MB');
+                input.value = '';
+                return;
+            }
+
+            // Show loading indicator
+            loadingIndicator.classList.remove('hidden');
             preview.classList.add('hidden');
+            placeholder.classList.add('hidden');
+
+            const formData = new FormData();
+            formData.append('image', input.files[0]);
+            formData.append('_token', '{{ csrf_token() }}');
+
+            // Upload to server
+            fetch('{{ route("admin.upload-image") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update hidden input and preview
+                document.getElementById('image_url').value = data.location;
+                img.src = data.location;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Gagal mengupload gambar. Silakan coba lagi.');
+                placeholder.classList.remove('hidden');
+            })
+            .finally(() => {
+                loadingIndicator.classList.add('hidden');
+            });
         }
     }
 
-    // Initialize image preview if URL exists
-    window.onload = function() {
+    // Handle drag and drop
+    function setupDragAndDrop() {
+        const dropZone = document.getElementById('upload-placeholder');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('border-primary', 'bg-primary', 'bg-opacity-5');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('border-primary', 'bg-primary', 'bg-opacity-5');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length) {
+                const input = document.getElementById('image');
+                input.files = files;
+                handleImageUpload(input);
+            }
+        }
+    }
+
+    // Initialize drag and drop
+    setupDragAndDrop();
+
+    // Initialize preview if URL exists
+    window.addEventListener('load', function() {
         const imageUrl = document.getElementById('image_url').value;
         if (imageUrl) {
-            previewImage(imageUrl);
+            const preview = document.getElementById('image-preview');
+            const placeholder = document.getElementById('upload-placeholder');
+            const img = preview.querySelector('img');
+            
+            img.src = imageUrl;
+            preview.classList.remove('hidden');
+            placeholder.classList.add('hidden');
         }
-    };
+    });
 </script>
 @endpush
 @endsection
