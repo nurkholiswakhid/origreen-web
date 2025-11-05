@@ -56,7 +56,7 @@
                         <i class="fas fa-phone text-primary mr-2"></i>Nomor Telepon
                     </label>
                     <div class="relative">
-                        <input type="text" name="phone" id="phone" required 
+                        <input type="text" name="phone" id="phone" required
                                value="{{ old('phone', $mapSetting->phone ?? '') }}"
                                class="w-full rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all duration-300 pl-10"
                                placeholder="Contoh: +62 812 3456 7890">
@@ -78,7 +78,7 @@
                         <i class="fas fa-envelope text-primary mr-2"></i>Alamat Email
                     </label>
                     <div class="relative">
-                        <input type="email" name="email" id="email" required 
+                        <input type="email" name="email" id="email" required
                                value="{{ old('email', $mapSetting->email ?? '') }}"
                                class="w-full rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all duration-300 pl-10"
                                placeholder="Contoh: info@origreen.com">
@@ -101,7 +101,7 @@
                     <i class="fas fa-clock text-primary mr-2"></i>Jam Operasional
                 </label>
                 <div class="relative">
-                    <input type="text" name="operation_hours" id="operation_hours" required 
+                    <input type="text" name="operation_hours" id="operation_hours" required
                            value="{{ old('operation_hours', $mapSetting->operation_hours ?? '') }}"
                            class="w-full rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all duration-300 pl-10"
                            placeholder="Contoh: Senin - Minggu: 08.00 - 17.00 WIB">
@@ -123,7 +123,7 @@
                     <i class="fas fa-map-marked-alt text-primary mr-2"></i>URL Google Maps
                 </label>
                 <div class="relative">
-                    <input type="url" name="google_maps_url" id="google_maps_url" required 
+                    <input type="url" name="google_maps_url" id="google_maps_url" required
                            value="{{ old('google_maps_url', $mapSetting->google_maps_url ?? '') }}"
                            class="w-full rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all duration-300 pl-10"
                            placeholder="https://maps.google.com/...">
