@@ -3,29 +3,45 @@
 @section('title', 'Edit Banner')
 
 @push('styles')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.css" rel="stylesheet">
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 @endpush
 
-
-
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/summernote-lite.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js" defer></script>
 <script>
-    $(function() {
-        $('#description').summernote({
-            placeholder: 'Tulis deskripsi banner di sini...',
-            height: 250,
-            tabsize: 2,
-            toolbar: [
-                ['style', ['bold', 'italic', 'underline', 'clear']],
-                ['font', ['fontsize', 'color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview', 'help']]
-            ]
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        initQuillEditor();
     });
+
+    function initQuillEditor() {
+        console.log('Initializing Quill Editor');
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: 'Tulis deskripsi banner di sini...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link', 'image', 'video'],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Set initial content if exists
+        const initialContent = document.querySelector('#description').value;
+        if (initialContent) {
+            quill.root.innerHTML = initialContent;
+        }
+
+        // Update hidden form field before submit
+        document.querySelector('form').onsubmit = function() {
+            document.querySelector('#description').value = quill.root.innerHTML;
+        };
+    }
 </script>
 @endpush
 
@@ -54,18 +70,19 @@
                 @enderror
             </div>
 
-            <!-- Deskripsi dengan Summernote -->
+            <!-- Deskripsi dengan Quill -->
             <div class="mb-4">
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
-        Deskripsi
-    </label>
-    <textarea name="description" id="description">
-        {!! old('description', $banner->description) !!}
-    </textarea>
-    @error('description')
-        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-    @enderror
-</div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                    Deskripsi
+                </label>
+                <div class="bg-white">
+                    <div id="editor" style="min-height: 200px; background: white;">{!! old('description', $banner->description) !!}</div>
+                </div>
+                <textarea name="description" id="description" class="hidden">{!! old('description', $banner->description) !!}</textarea>
+                @error('description')
+                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                @enderror
+            </div>
             <!-- Upload Gambar -->
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="image">
@@ -178,4 +195,5 @@
         </form>
     </div>
 </div>
+
 @endsection

@@ -3,11 +3,11 @@
 @section('title', 'Edit Tentang')
 
 @push('styles')
-    <!-- Summernote CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
     <!-- FontAwesome Icon Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fontawesome-iconpicker@3.2.0/dist/css/fontawesome-iconpicker.min.css">
-    <!-- Nano Color Picker -->
+    <!-- Quill CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <!-- Color Picker -->
     <style>
         .color-picker-wrapper {
             position: relative;
@@ -97,9 +97,6 @@
             border-radius: 0.25rem;
             border: 1px solid #e5e7eb;
         }
-        .note-editor {
-            background: white;
-        }
         .iconpicker-popover {
             z-index: 1050;
         }
@@ -113,33 +110,20 @@
             border-radius: 6px;
             border: 1px solid #e5e7eb;
         }
-        .note-editor.note-frame {
+        .ql-toolbar.ql-snow {
             border-color: #e5e7eb;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            background: #f9fafb;
         }
-        .note-editor.note-frame:focus-within {
-            border-color: #22c55e;
-            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        .ql-container.ql-snow {
+            border-color: #e5e7eb;
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            background: white;
         }
-        .note-toolbar {
-            background: #f9fafb !important;
-            border-bottom: 1px solid #e5e7eb !important;
-            border-radius: 0.5rem 0.5rem 0 0;
-            padding: 0.5rem !important;
-        }
-        .note-btn {
-            border-color: #e5e7eb !important;
-            background: white !important;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-            padding: 0.375rem 0.75rem !important;
-            border-radius: 0.375rem !important;
-        }
-        .note-btn:hover {
-            background: #f9fafb !important;
-        }
-        .note-btn.active {
-            background: #f3f4f6 !important;
+        .ql-editor {
+            min-height: 200px;
         }
     </style>
 @endpush
@@ -206,9 +190,8 @@
                         <label class="block text-gray-700 font-semibold mb-3" for="description">
                             <i class="fas fa-paragraph mr-2 text-green-500"></i>Deskripsi
                         </label>
-                        <textarea name="description" id="description" rows="8"
-                            class="summernote"
-                            placeholder="Masukkan deskripsi perusahaan">{{ old('description', $about->description) }}</textarea>
+                        <div id="editor" class="bg-white rounded-lg">{!! old('description', $about->description) !!}</div>
+                        <textarea name="description" id="description" class="hidden">{{ old('description', $about->description) }}</textarea>
                         @error('description')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -435,10 +418,10 @@
 </div>
 
 @push('scripts')
-    <!-- jQuery -->
+    <!-- jQuery (needed for Icon Picker) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Summernote JS -->
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <!-- Quill JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <!-- FontAwesome Icon Picker -->
     <script src="https://cdn.jsdelivr.net/npm/fontawesome-iconpicker@3.2.0/dist/js/fontawesome-iconpicker.min.js"></script>
     <script>
@@ -501,57 +484,56 @@
             });
         }
 
-        // Initialize Summernote
-        $(document).ready(function() {
-            $('.summernote').summernote({
-                placeholder: 'Masukkan deskripsi perusahaan...',
-                tabsize: 2,
-                height: 300,
+        // Initialize Quill
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: 'Masukkan deskripsi perusahaan...',
+            modules: {
                 toolbar: [
-                    ['style', ['style']],
-                    ['font', ['bold', 'underline', 'clear']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['table', ['table']],
-                    ['insert', ['link']],
-                    ['view', ['fullscreen', 'help']]
-                ],
-                callbacks: {
-                    onImageUpload: function(files) {
-                        alert('Untuk menambahkan gambar, silahkan upload terlebih dahulu ke hosting/cloud dan masukkan URL-nya menggunakan tombol link');
-                    }
-                }
-            });
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link'],
+                    ['clean']
+                ]
+            }
+        });
 
-            // Initialize Icon Pickers with custom settings
-            $('.icon-picker').iconpicker({
-                title: 'Pilih Icon',
-                selected: true,
-                defaultValue: 'fas fa-users',
-                placement: 'bottom',
-                collision: 'none',
-                animation: true,
-                hideOnSelect: true,
-                templates: {
-                    popover: '<div class="iconpicker-popover popover shadow-lg"><div class="arrow"></div>' +
-                            '<div class="popover-title bg-gray-50 rounded-t-lg"></div><div class="popover-content"></div></div>',
-                    footer: '<div class="popover-footer p-2 bg-gray-50 rounded-b-lg text-right"></div>',
-                    buttons: '<button class="iconpicker-btn text-sm px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">Pilih</button>',
-                    search: '<input type="search" class="iconpicker-search mb-2" placeholder="Cari icon...">'
-                }
-            }).on('iconpickerSelected', function(e) {
-                // Update the associated input field when an icon is selected
-                const iconInput = $(this).siblings('input[type="hidden"]');
-                iconInput.val(e.iconpickerValue);
-            });
+        // Initialize Icon Pickers with custom settings
+        $('.icon-picker').iconpicker({
+            title: 'Pilih Icon',
+            selected: true,
+            defaultValue: 'fas fa-users',
+            placement: 'bottom',
+            collision: 'none',
+            animation: true,
+            hideOnSelect: true,
+            templates: {
+                popover: '<div class="iconpicker-popover popover shadow-lg"><div class="arrow"></div>' +
+                        '<div class="popover-title bg-gray-50 rounded-t-lg"></div><div class="popover-content"></div></div>',
+                footer: '<div class="popover-footer p-2 bg-gray-50 rounded-b-lg text-right"></div>',
+                buttons: '<button class="iconpicker-btn text-sm px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600">Pilih</button>',
+                search: '<input type="search" class="iconpicker-search mb-2" placeholder="Cari icon...">'
+            }
+        }).on('iconpickerSelected', function(e) {
+            // Update the associated input field when an icon is selected
+            const iconInput = $(this).siblings('input[type="hidden"]');
+            iconInput.val(e.iconpickerValue);
+        });
 
-            // Initialize Color Pickers
-            initColorPickers();
+        // Initialize Color Pickers
+        initColorPickers();
 
-            // Make the preview image clickable
-            $('#imagePreview').click(function() {
-                $('#image').click();
-            });
+        // Make the preview image clickable
+        document.getElementById('imagePreview').addEventListener('click', function() {
+            document.getElementById('image').click();
+        });
+
+        // Update hidden textarea before form submit
+        document.querySelector('form').addEventListener('submit', function() {
+            document.getElementById('description').value = quill.root.innerHTML;
         });
 
         // Image preview function
@@ -565,11 +547,9 @@
                 }
 
                 const reader = new FileReader();
-
                 reader.onload = function(e) {
-                    $('#imagePreview').attr('src', e.target.result);
+                    document.getElementById('imagePreview').src = e.target.result;
                 }
-
                 reader.readAsDataURL(input.files[0]);
             }
         }
