@@ -22,7 +22,7 @@ class DashboardController extends Controller
 
         // Mengambil aktivitas terbaru (5 berita terbaru)
         $recentNews = News::latest()->take(3)->get();
-        
+
         // Mengambil testimoni terbaru
         $recentTestimonials = Testimonial::latest()->take(3)->get();
 
