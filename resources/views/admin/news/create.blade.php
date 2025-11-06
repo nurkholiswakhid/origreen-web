@@ -16,7 +16,7 @@
 
 <div class="bg-white rounded-xl shadow-lg overflow-hidden">
     <div class="p-8">
-        <form action="{{ route('admin.news.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-6">
