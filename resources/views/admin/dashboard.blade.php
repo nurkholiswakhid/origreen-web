@@ -9,7 +9,7 @@
             </div>
             <div class="ml-4">
                 <p class="text-gray-500">Total Berita</p>
-                <h3 class="text-2xl font-bold text-gray-700">{{ $statistics['news_count'] }}</h3>
+                <h3 class="text-2xl font-bold text-gray-700">{{ $statistics['news_count'] ?? 0 }}</h3>
             </div>
         </div>
     </div>
@@ -21,7 +21,7 @@
             </div>
             <div class="ml-4">
                 <p class="text-gray-500">Total Fasilitas</p>
-                <h3 class="text-2xl font-bold text-gray-700">{{ $statistics['facilities_count'] }}</h3>
+                <h3 class="text-2xl font-bold text-gray-700">{{ $statistics['facilities_count'] ?? 0 }}</h3>
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
             </div>
             <div class="ml-4">
                 <p class="text-gray-500">Total Testimoni</p>
-                <h3 class="text-2xl font-bold text-gray-700">{{ $statistics['testimonials_count'] }}</h3>
+                <h3 class="text-2xl font-bold text-gray-700">{{ $statistics['testimonials_count'] ?? 0 }}</h3>
             </div>
         </div>
     </div>
@@ -48,7 +48,7 @@
                 <i class="fas fa-newspaper text-xl"></i>
                 <span class="ml-3">Tambah Berita</span>
             </a>
-            <a href="{{ route('admin.facility.create') }}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-primary hover:text-white transition-colors">
+            <a href="{{ route('admin.facilities.create') }}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-primary hover:text-white transition-colors">
                 <i class="fas fa-building text-xl"></i>
                 <span class="ml-3">Tambah Fasilitas</span>
             </a>
@@ -108,5 +108,4 @@
         </div>
     </div>
 </div>
-@endsection
 @endsection

@@ -3,12 +3,36 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\News;
+use App\Models\Testimonial;
+use App\Models\Facility;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        return view('admin.dashboard');
+        // Mengambil data untuk dashboard
+        $statistics = [
+            'news_count' => News::count(),
+            'testimonials_count' => Testimonial::count(),
+            'facilities_count' => Facility::count(),
+        ];
+
+        // Mengambil berita terbaru
+        $recentNews = News::latest('published_at')
+            ->take(3)
+            ->get();
+        
+        // Mengambil testimoni terbaru
+        $recentTestimonials = Testimonial::latest()
+            ->take(3)
+            ->get();
+
+        return view('admin.dashboard', compact(
+            'statistics',
+            'recentNews',
+            'recentTestimonials'
+        ));
     }
 }
