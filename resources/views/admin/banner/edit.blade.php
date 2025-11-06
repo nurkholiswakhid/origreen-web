@@ -183,9 +183,9 @@
                     const uploadUrl = '{{ route("admin.upload-image") }}';
                     // Use absolute URL
                     const fullUploadUrl = uploadUrl.startsWith('http') ? uploadUrl : baseUrl + uploadUrl;
-                    
+
                     console.log('Uploading to:', fullUploadUrl); // Debug log
-                    
+
                     fetch(fullUploadUrl, {
                         method: 'POST',
                         body: formData,
@@ -216,14 +216,14 @@
                     .catch(error => {
                         console.error('Error details:', error);
                         let errorMessage = 'Gagal mengupload gambar: ';
-                        
+
                         // Handle network errors
                         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
                             errorMessage += 'Koneksi gagal. Pastikan Anda terhubung ke internet dan URL server benar.';
                         } else {
                             errorMessage += error.message || 'Terjadi kesalahan yang tidak diketahui';
                         }
-                        
+
                         alert(errorMessage);
                     });
                 }
