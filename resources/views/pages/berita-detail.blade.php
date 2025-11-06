@@ -62,24 +62,24 @@
             <!-- Share Buttons -->
             <div class="flex items-center space-x-4">
                 <span class="text-gray-600">Bagikan:</span>
-                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" 
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}"
                    target="_blank"
                    class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($news->title) }}" 
+                <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->url()) }}&text={{ urlencode($news->title) }}"
                    target="_blank"
                    class="w-8 h-8 bg-blue-400 text-white rounded-full flex items-center justify-center hover:bg-blue-500 transition">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="https://wa.me/?text={{ urlencode($news->title . ' ' . request()->url()) }}" 
+                <a href="https://wa.me/?text={{ urlencode($news->title . ' ' . request()->url()) }}"
                    target="_blank"
                    class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition">
                     <i class="fab fa-whatsapp"></i>
                 </a>
             </div>
         </div>
-        
+
         <!-- Related News -->
         @if($relatedNews && $relatedNews->count() > 0)
         <div class="mt-16">

@@ -13,7 +13,7 @@ class FacilityController extends Controller
             ->where('is_active', true)
             ->orderBy('order')
             ->get();
-            
+
         $fasilitas = Facility::where('type', 'fasilitas')
             ->where('is_active', true)
             ->orderBy('order')

@@ -18,8 +18,8 @@
                         <div class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition group">
                             <div class="h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
                                 @if($item->display_type === 'image' && $item->image_url)
-                                    <img src="{{ $item->image_url }}" 
-                                         alt="{{ $item->name }}" 
+                                    <img src="{{ $item->image_url }}"
+                                         alt="{{ $item->name }}"
                                          class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
                                 @else
                                     <i class="{{ $item->icon ?? 'fas fa-star' }} text-7xl text-white group-hover:scale-110 transition"></i>
@@ -54,8 +54,8 @@
                         <div class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition group">
                             <div class="h-48 bg-gradient-to-br from-secondary to-dark flex items-center justify-center overflow-hidden">
                                 @if($item->display_type === 'image' && $item->image_url)
-                                    <img src="{{ $item->image_url }}" 
-                                         alt="{{ $item->name }}" 
+                                    <img src="{{ $item->image_url }}"
+                                         alt="{{ $item->name }}"
                                          class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
                                 @else
                                     <i class="{{ $item->icon ?? 'fas fa-star' }} text-7xl text-white group-hover:scale-110 transition"></i>
