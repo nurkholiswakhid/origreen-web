@@ -31,12 +31,6 @@
                        class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all duration-300">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             </div>
-            <select id="statusFilter"
-                    class="px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 transition-all duration-300 cursor-pointer">
-                <option value="all">Semua Status</option>
-                <option value="published">Dipublikasi</option>
-                <option value="scheduled">Dijadwalkan</option>
-            </select>
         </div>
     </div>
     <div class="overflow-x-auto">

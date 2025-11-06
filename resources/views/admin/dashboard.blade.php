@@ -1,27 +1,15 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center">
             <div class="p-3 rounded-full bg-primary/10 text-primary">
-                <i class="fas fa-users text-3xl"></i>
+                <i class="fas fa-newspaper text-3xl"></i>
             </div>
             <div class="ml-4">
-                <p class="text-gray-500">Total Pengunjung</p>
-                <h3 class="text-2xl font-bold text-gray-700">50K+</h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center">
-            <div class="p-3 rounded-full bg-secondary/10 text-secondary">
-                <i class="fas fa-ticket-alt text-3xl"></i>
-            </div>
-            <div class="ml-4">
-                <p class="text-gray-500">Tiket Terjual</p>
-                <h3 class="text-2xl font-bold text-gray-700">1.2K</h3>
+                <p class="text-gray-500">Total Berita</p>
+                <h3 class="text-2xl font-bold text-gray-700">{{ $statistics['news_count'] }}</h3>
             </div>
         </div>
     </div>
@@ -29,11 +17,11 @@
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex items-center">
             <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
-                <i class="fas fa-star text-3xl"></i>
+                <i class="fas fa-building text-3xl"></i>
             </div>
             <div class="ml-4">
-                <p class="text-gray-500">Rating</p>
-                <h3 class="text-2xl font-bold text-gray-700">4.8/5.0</h3>
+                <p class="text-gray-500">Total Fasilitas</p>
+                <h3 class="text-2xl font-bold text-gray-700">{{ $statistics['facilities_count'] }}</h3>
             </div>
         </div>
     </div>
@@ -44,8 +32,8 @@
                 <i class="fas fa-comments text-3xl"></i>
             </div>
             <div class="ml-4">
-                <p class="text-gray-500">Testimoni</p>
-                <h3 class="text-2xl font-bold text-gray-700">500+</h3>
+                <p class="text-gray-500">Total Testimoni</p>
+                <h3 class="text-2xl font-bold text-gray-700">{{ $statistics['testimonials_count'] }}</h3>
             </div>
         </div>
     </div>
@@ -54,55 +42,54 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Quick Actions -->
     <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Aksi Cepat</h2>
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Menu Cepat</h2>
         <div class="grid grid-cols-2 gap-4">
+            <a href="{{ route('admin.news.create') }}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-primary hover:text-white transition-colors">
+                <i class="fas fa-newspaper text-xl"></i>
+                <span class="ml-3">Tambah Berita</span>
+            </a>
+            <a href="{{ route('admin.facility.create') }}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-primary hover:text-white transition-colors">
+                <i class="fas fa-building text-xl"></i>
+                <span class="ml-3">Tambah Fasilitas</span>
+            </a>
             <a href="{{ route('admin.banner.edit') }}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-primary hover:text-white transition-colors">
                 <i class="fas fa-image text-xl"></i>
                 <span class="ml-3">Edit Banner</span>
             </a>
-            <a href="#" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-primary hover:text-white transition-colors">
-                <i class="fas fa-cog text-xl"></i>
-                <span class="ml-3">Pengaturan</span>
-            </a>
             <a href="{{ url('/') }}" target="_blank" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-primary hover:text-white transition-colors">
                 <i class="fas fa-external-link-alt text-xl"></i>
                 <span class="ml-3">Lihat Website</span>
-            </a>
-            <a href="#" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-primary hover:text-white transition-colors">
-                <i class="fas fa-user text-xl"></i>
-                <span class="ml-3">Profile</span>
             </a>
         </div>
     </div>
 
     <!-- Recent Activities -->
     <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">Aktivitas Terbaru</h2>
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Berita Terbaru</h2>
         <div class="space-y-4">
+            @forelse($recentNews as $news)
             <div class="flex items-start">
                 <div class="flex-shrink-0">
                     <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <i class="fas fa-edit text-blue-500"></i>
+                        <i class="fas fa-newspaper text-blue-500"></i>
                     </div>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-900">Banner diperbarui</p>
-                    <p class="text-sm text-gray-500">2 jam yang lalu</p>
+                    <p class="text-sm font-medium text-gray-900">{{ Str::limit($news->title, 40) }}</p>
+                    <p class="text-sm text-gray-500">{{ $news->published_at->diffForHumans() }}</p>
                 </div>
             </div>
+            @empty
+            <p class="text-gray-500 text-sm">Belum ada berita</p>
+            @endforelse
+        </div>
+    </div>
 
-            <div class="flex items-start">
-                <div class="flex-shrink-0">
-                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                        <i class="fas fa-user-check text-green-500"></i>
-                    </div>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-900">Login berhasil</p>
-                    <p class="text-sm text-gray-500">5 jam yang lalu</p>
-                </div>
-            </div>
-
+    <!-- Recent Testimonials -->
+    <div class="col-span-1 lg:col-span-2 bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Testimoni Terbaru</h2>
+        <div class="space-y-4">
+            @forelse($recentTestimonials as $testimonial)
             <div class="flex items-start">
                 <div class="flex-shrink-0">
                     <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
@@ -110,11 +97,16 @@
                     </div>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-900">Testimoni baru diterima</p>
-                    <p class="text-sm text-gray-500">1 hari yang lalu</p>
+                    <p class="text-sm font-medium text-gray-900">{{ $testimonial->name }}</p>
+                    <p class="text-sm text-gray-500">{{ Str::limit($testimonial->message, 100) }}</p>
+                    <p class="text-xs text-gray-400 mt-1">{{ $testimonial->created_at->diffForHumans() }}</p>
                 </div>
             </div>
+            @empty
+            <p class="text-gray-500 text-sm">Belum ada testimoni</p>
+            @endforelse
         </div>
     </div>
 </div>
+@endsection
 @endsection

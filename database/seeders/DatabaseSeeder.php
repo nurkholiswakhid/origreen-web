@@ -24,8 +24,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $adminData = [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin Origreen',
+            'email' => 'admin@origreen.com',
             'is_admin' => true,
             'password' => bcrypt('password'),
         ];

@@ -1,11 +1,124 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Origreen Website
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sebuah website untuk wisata alam Origreen yang dibangun menggunakan Laravel 10 dan Tailwind CSS.
+
+## Persyaratan Sistem
+
+Sebelum menginstal, pastikan sistem Anda memenuhi persyaratan berikut:
+
+- PHP >= 8.1
+- Composer
+- MySQL/MariaDB
+- Node.js & NPM
+- Git
+
+## Langkah-langkah Instalasi
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/nurkholiswakhid/origreen-web.git
+cd origreen-web
+```
+
+### 2. Install Dependencies PHP
+
+```bash
+composer install
+```
+
+### 3. Install Dependencies JavaScript
+
+```bash
+npm install
+```
+
+### 4. Konfigurasi Environment
+
+```bash
+# Copy file environment
+cp .env.example .env
+
+# Generate application key
+php artisan key:generate
+```
+
+Buka file `.env` dan sesuaikan konfigurasi database:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=origreen_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Persiapkan Database
+
+```bash
+# Buat database
+mysql -u root -p -e "CREATE DATABASE origreen_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# Jalankan migrasi dan seeder
+php artisan migrate:fresh --seed
+```
+
+### 6. Link Storage
+
+```bash
+php artisan storage:link
+```
+
+### 7. Compile Assets
+
+```bash
+# Untuk development
+npm run dev
+
+# Untuk production
+npm run build
+```
+
+### 8. Jalankan Server
+
+```bash
+php artisan serve
+```
+
+Website dapat diakses di `http://localhost:8000`
+
+## Akses Admin
+
+Setelah menjalankan seeder, Anda dapat login sebagai admin dengan kredensial berikut:
+
+```
+Email: admin@origreen.com
+Password: password
+```
+
+Panel admin dapat diakses di `http://localhost:8000/admin`
+
+## Struktur Aplikasi
+
+- `/resources/views` - Berisi semua file view/template
+- `/app/Http/Controllers` - Berisi controller untuk menangani request
+- `/app/Models` - Berisi model-model database
+- `/database/migrations` - Berisi file migrasi database
+- `/database/seeders` - Berisi file seeder untuk mengisi data awal
+- `/public` - Berisi asset statis (gambar, CSS, JavaScript)
+- `/routes` - Berisi definisi routing
+
+## Fitur
+
+- Manajemen Banner
+- Manajemen Halaman About
+- Manajemen Wahana & Fasilitas
+- Manajemen Berita
+- Manajemen Testimonial
+- Manajemen FAQ
+- Manajemen Social Media
+- Manajemen Lokasi & Kontak
 
 ## About Laravel
 
