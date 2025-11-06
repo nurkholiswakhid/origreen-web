@@ -178,18 +178,53 @@
                     formData.append('image', input.files[0]);
                     formData.append('_token', '{{ csrf_token() }}');
 
-                    fetch('{{ route("admin.upload-image") }}', {
+                    // Get the full URL of the current page
+                    const baseUrl = window.location.protocol + '//' + window.location.host;
+                    const uploadUrl = '{{ route("admin.upload-image") }}';
+                    // Use absolute URL
+                    const fullUploadUrl = uploadUrl.startsWith('http') ? uploadUrl : baseUrl + uploadUrl;
+                    
+                    console.log('Uploading to:', fullUploadUrl); // Debug log
+                    
+                    fetch(fullUploadUrl, {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'include'
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`HTTP error! status: ${response.status}, message: ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
                     .then(data => {
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
                         document.getElementById('image_url').value = data.location;
                         document.getElementById('preview-image').src = data.location;
+                        // Tambahkan notifikasi sukses
+                        alert('Gambar berhasil diupload!');
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        alert('Gagal mengupload gambar. Silakan coba lagi.');
+                        console.error('Error details:', error);
+                        let errorMessage = 'Gagal mengupload gambar: ';
+                        
+                        // Handle network errors
+                        if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+                            errorMessage += 'Koneksi gagal. Pastikan Anda terhubung ke internet dan URL server benar.';
+                        } else {
+                            errorMessage += error.message || 'Terjadi kesalahan yang tidak diketahui';
+                        }
+                        
+                        alert(errorMessage);
                     });
                 }
             }
