@@ -114,8 +114,8 @@
                 <p class="mt-2 text-sm text-gray-500 flex items-center gap-1">
                     <i class="fas fa-info-circle text-gray-400"></i>
                     Klik pada input untuk membuka pemilih icon, atau pilih dari rekomendasi
-                    <a href="https://fontawesome.com/v5/search?o=r&m=free&f=brands" 
-                       target="_blank" 
+                    <a href="https://fontawesome.com/v5/search?o=r&m=free&f=brands"
+                       target="_blank"
                        class="text-primary hover:text-primary-dark inline-flex items-center gap-1 ml-1">
                         Lihat semua icon
                         <i class="fas fa-external-link-alt text-xs"></i>
@@ -162,12 +162,12 @@
             </div>
 
             <div class="flex items-center justify-end gap-3 pt-6">
-                <a href="{{ route('admin.social-media.index') }}" 
+                <a href="{{ route('admin.social-media.index') }}"
                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/20">
                     <i class="fas fa-times mr-2 text-gray-400"></i>
                     Batal
                 </a>
-                <button type="submit" 
+                <button type="submit"
                     class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                     <i class="fas fa-save mr-2"></i>
                     Simpan Perubahan

@@ -33,7 +33,7 @@
                 Kelola Social Media
             </h1>
         </div>
-        <a href="{{ route('admin.social-media.create') }}" 
+        <a href="{{ route('admin.social-media.create') }}"
            class="inline-flex items-center gap-2 px-4 py-2 border border-primary bg-white text-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
             <i class="fas fa-plus text-sm"></i>
             <span class="font-medium">Tambah Social Media</span>
@@ -102,7 +102,7 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <a href="{{ $social->url }}" target="_blank" 
+                                        <a href="{{ $social->url }}" target="_blank"
                                            class="text-primary hover:text-primary-dark flex items-center gap-2 group">
                                             <span class="text-sm">{{ $social->url }}</span>
                                             <i class="fas fa-external-link-alt text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
@@ -118,8 +118,8 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
-                                            {{ $social->is_active 
-                                                ? 'bg-green-100 text-green-800 border border-green-200' 
+                                            {{ $social->is_active
+                                                ? 'bg-green-100 text-green-800 border border-green-200'
                                                 : 'bg-red-100 text-red-800 border border-red-200' }}">
                                             <i class="fas {{ $social->is_active ? 'fa-check' : 'fa-times' }} mr-1"></i>
                                             {{ $social->is_active ? 'Aktif' : 'Tidak Aktif' }}
@@ -141,7 +141,7 @@
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus social media ini?');">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" 
+                                                <button type="submit"
                                                     class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
