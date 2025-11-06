@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\MapSettingController;
 use App\Http\Controllers\Admin\FaqController;
+use App\Http\Controllers\Admin\SocialMediaController;
 
 // Static pages
 Route::view('/tentang', 'pages.tentang')->name('tentang');
@@ -46,6 +47,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     // News Routes
     Route::resource('news', NewsController::class, ['as' => 'admin']);
+
+    // Social Media Routes
+    Route::resource('social-media', SocialMediaController::class, [
+        'as' => 'admin',
+        'parameters' => ['social-media' => 'socialMedia']
+    ]);
+    Route::post('social-media/reorder', [SocialMediaController::class, 'reorder'])->name('admin.social-media.reorder');
 
     // About Routes
     Route::get('/about/edit', [AboutController::class, 'edit'])->name('admin.about.edit');

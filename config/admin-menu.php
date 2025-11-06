@@ -41,4 +41,9 @@ return [
         'title' => 'FAQ',
         'icon' => 'fa-question-circle',
     ],
+    [
+        'route' => 'admin.social-media.index',
+        'title' => 'Social Media',
+        'icon' => 'fa-share-alt',
+    ],
 ];

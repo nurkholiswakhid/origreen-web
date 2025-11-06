@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             TestimonialSeeder::class,
             MapSettingSeeder::class,
             FaqSeeder::class,
+            SocialMediaSeeder::class,
         ]);
 
         $adminData = [
