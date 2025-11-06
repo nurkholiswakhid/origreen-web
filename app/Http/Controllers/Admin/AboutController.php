@@ -88,15 +88,15 @@ class AboutController extends Controller
             }
 
             return redirect()->back()->with('success', 'About section berhasil diperbarui');
-            
+
         } catch (\Exception $e) {
             Log::error('Error updating about section: ' . $e->getMessage());
             Log::error('Error details: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
-            
+
             // Log the request data for debugging
             Log::info('Request data:', $request->all());
-            
+
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Error: ' . $e->getMessage());
