@@ -9,6 +9,7 @@ use App\Models\News;
 use App\Models\Testimonial;
 use App\Models\MapSetting;
 use App\Models\Faq;
+use App\Models\SocialMedia;
 use Illuminate\Http\Request;
 
 class WelcomeController extends Controller
@@ -29,7 +30,8 @@ class WelcomeController extends Controller
         $faqs = Faq::where('is_active', true)
                    ->orderBy('order')
                    ->get();
+        $socialMedia = SocialMedia::all();
 
-        return view('welcome', compact('banner', 'about', 'facilities', 'news', 'testimonials', 'mapSetting', 'faqs'));
+        return view('welcome', compact('banner', 'about', 'facilities', 'news', 'testimonials', 'mapSetting', 'faqs', 'socialMedia'));
     }
 }

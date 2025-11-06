@@ -15,5 +15,6 @@ class MapSetting extends Model
         'email',
         'operation_hours',
         'google_maps_url',
+        'map_embed_url',
     ];
 }

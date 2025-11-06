@@ -21,16 +21,25 @@ class TestimonialController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'occupation' => 'nullable|string|max:255',
             'content' => 'required|string',
-            'avatar_url' => 'nullable|url|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar_url' => 'nullable|string',
             'rating' => 'required|numeric|min:1|max:5',
             'is_active' => 'boolean',
         ]);
 
+        $data = $request->except(['avatar']);
         $data['is_active'] = $request->has('is_active');
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('testimonials', 'public');
+            $data['avatar_url'] = '/storage/' . $avatarPath;
+        }
+
         Testimonial::create($data);
 
         return redirect()->route('admin.testimonials.index')
@@ -44,16 +53,25 @@ class TestimonialController extends Controller
 
     public function update(Request $request, Testimonial $testimonial)
     {
-        $data = $request->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'occupation' => 'nullable|string|max:255',
             'content' => 'required|string',
-            'avatar_url' => 'nullable|url|max:255',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar_url' => 'nullable|string',
             'rating' => 'required|numeric|min:1|max:5',
             'is_active' => 'boolean',
         ]);
 
+        $data = $request->except(['avatar']);
         $data['is_active'] = $request->has('is_active');
+
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('testimonials', 'public');
+            $data['avatar_url'] = '/storage/' . $avatarPath;
+        }
+
         $testimonial->update($data);
 
         return redirect()->route('admin.testimonials.index')

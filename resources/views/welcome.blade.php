@@ -50,7 +50,15 @@
                 <div>
                     <h3 class="text-3xl font-bold text-gray-800 mb-6">{{ $about->subtitle }}</h3>
                     <div class="prose prose-lg max-w-none text-gray-600 mb-6">
-                        {!! $about->description !!}
+                        <div class="description-preview">
+                            {!! \Illuminate\Support\Str::limit(strip_tags($about->description), 500) !!}
+                        </div>
+                        @if (strlen(strip_tags($about->description)) > 500)
+                            <a href="{{ route('tentang') }}" class="inline-flex items-center text-primary hover:underline mt-4">
+                                <span>Baca Selengkapnya</span>
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        @endif
                     </div>
 
 
@@ -91,14 +99,23 @@
             <div class="grid md:grid-cols-3 gap-8">
                 @foreach($facilities->where('is_active', true)->where('type', 'wahana') as $facility)
                 <div class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition group">
-                    <div class="h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                        <i class="{{ $facility->icon }} text-7xl text-white group-hover:scale-110 transition"></i>
+                    <div class="h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
+                        @if($facility->display_type === 'icon')
+                            <i class="{{ $facility->main_icon ?? $facility->icon }} text-7xl text-white group-hover:scale-110 transition"></i>
+                        @elseif($facility->display_type === 'image' && $facility->image_url)
+                            <img src="{{ asset('storage/' . str_replace('/storage/', '', $facility->image_url)) }}"
+                                alt="{{ $facility->name }}"
+                                class="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                                onerror="this.onerror=null; this.src='{{ asset('images/default-facility.png') }}'; console.log('Error loading image: {{ $facility->image_url }}');">
+                        @else
+                            <i class="fas fa-image text-7xl text-white group-hover:scale-110 transition"></i>
+                        @endif
                     </div>
                     <div class="p-6">
                         <h3 class="text-2xl font-bold text-gray-800 mb-3">{{ $facility->name }}</h3>
                         <p class="text-gray-600 mb-4">{{ $facility->description }}</p>
                         <div class="flex items-center text-primary">
-                            <i class="fas fa-clock mr-2"></i>
+                            <i class="{{ $facility->icon ?? 'fas fa-clock' }} mr-2"></i>
                             <span>{{ $facility->duration }}</span>
                         </div>
                     </div>
@@ -114,7 +131,7 @@
                         <h3 class="text-2xl font-bold text-gray-800 mb-3">{{ $facility->name }}</h3>
                         <p class="text-gray-600 mb-4">{{ $facility->description }}</p>
                         <div class="flex items-center text-primary">
-                            <i class="fas fa-shield-alt mr-2"></i>
+                            <i class="{{ $facility->icon ?? 'fas fa-shield-alt' }} mr-2"></i>
                             <span>{{ $facility->duration }}</span>
                         </div>
                     </div>
@@ -268,7 +285,7 @@
                 <div>
                     <div class="rounded-2xl h-96 overflow-hidden shadow-lg">
                         <iframe
-                            src="{{ str_replace('maps.google.com', 'www.google.com/maps/embed', $mapSetting->google_maps_url) }}"
+                            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3953.0466143012614!2d112.61879797493668!3d-7.780969377328361!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zN8KwNDYnNTEuNSJTIDExMsKwMzcnMTguNCJF!5e0!3m2!1sen!2sid!4v1699232947978!5m2!1sen!2sid"
                             width="100%"
                             height="100%"
                             style="border:0;"

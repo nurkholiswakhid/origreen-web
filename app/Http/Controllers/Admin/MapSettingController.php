@@ -22,6 +22,7 @@ class MapSettingController extends Controller
             'email' => 'required|email|max:255',
             'operation_hours' => 'required|string|max:255',
             'google_maps_url' => 'required|url|max:255',
+            'map_embed_url' => 'required|url',
         ]);
 
         $mapSetting = MapSetting::first();

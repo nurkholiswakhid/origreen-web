@@ -9,8 +9,8 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\SocialMediaController;
 
 // Static pages
-Route::view('/tentang', 'pages.tentang')->name('tentang');
-Route::view('/wahana', 'pages.wahana')->name('wahana');
+Route::get('/tentang', [App\Http\Controllers\AboutController::class, 'index'])->name('tentang');
+Route::get('/wahana', [App\Http\Controllers\FacilityController::class, 'index'])->name('wahana');
 Route::get('/berita', 'App\Http\Controllers\NewsController@index')->name('berita');
 Route::get('/berita/{news}', 'App\Http\Controllers\NewsController@show')->name('berita.show');
 

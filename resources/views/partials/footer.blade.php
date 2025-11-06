@@ -9,20 +9,13 @@
                     </div>
                     <span class="text-2xl font-bold">Origreen</span>
                 </div>
-                <p class="text-gray-300 mb-4">Destinasi wisata alam terbaik untuk pengalaman liburan yang tak terlupakan bersama keluarga.</p>
+                <p class="text-gray-300 mb-4">{{ $banner->description }}</p>
                 <div class="flex space-x-4">
-                    <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
-                        <i class="fab fa-facebook-f"></i>
+                    @foreach($socialMedia->where('is_active', true)->sortBy('sort_order') as $social)
+                    <a href="{{ $social->url }}" target="_blank" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
+                        <i class="{{ $social->icon }}"></i>
                     </a>
-                    <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition">
-                        <i class="fab fa-youtube"></i>
-                    </a>
+                    @endforeach
                 </div>
             </div>
 
@@ -44,34 +37,28 @@
                 <ul class="space-y-3 text-gray-300">
                     <li class="flex items-start">
                         <i class="fas fa-map-marker-alt mt-1 mr-3"></i>
-                        <span>Jl. Wisata Alam No. 123, Desa Hijau, Indonesia</span>
+                        <span>{{ $mapSetting->address }}</span>
                     </li>
                     <li class="flex items-center">
                         <i class="fas fa-phone mr-3"></i>
-                        <span>+62 812-3456-7890</span>
+                        <span>{{ $mapSetting->phone }}</span>
                     </li>
                     <li class="flex items-center">
                         <i class="fas fa-envelope mr-3"></i>
-                        <span>info@origreen.com</span>
+                        <span>{{ $mapSetting->email }}</span>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-clock mr-3"></i>
+                        <span>{{ $mapSetting->operation_hours }}</span>
                     </li>
                 </ul>
             </div>
 
-            <!-- Newsletter -->
-            <div>
-                <h3 class="text-xl font-bold mb-4">Newsletter</h3>
-                <p class="text-gray-300 mb-4">Dapatkan update terbaru tentang promo dan event kami</p>
-                <form class="space-y-2">
-                    <input type="email" placeholder="Email Anda" class="w-full px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-primary">
-                    <button type="submit" class="w-full bg-primary hover:bg-secondary text-white px-6 py-2 rounded-full font-semibold transition">
-                        Berlangganan
-                    </button>
-                </form>
-            </div>
+
         </div>
 
         <div class="border-t border-white/20 pt-8 text-center text-gray-300">
-            <p>&copy; {{ date('Y') }} Origreen. All rights reserved. Made with <i class="fas fa-heart text-red-500"></i> for nature lovers</p>
+            <p>&copy; {{ date('Y') }} Origreen. All rights reserved.
         </div>
     </div>
 </footer>

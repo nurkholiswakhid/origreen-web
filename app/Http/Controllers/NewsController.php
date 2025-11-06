@@ -22,6 +22,13 @@ class NewsController extends Controller
             abort(404);
         }
 
-        return view('pages.berita-detail', compact('news'));
+        // Get related news (excluding current news)
+        $relatedNews = News::where('id', '!=', $news->id)
+            ->where('published_at', '<=', now())
+            ->latest('published_at')
+            ->take(3)
+            ->get();
+
+        return view('pages.berita-detail', compact('news', 'relatedNews'));
     }
 }

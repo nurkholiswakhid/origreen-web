@@ -123,10 +123,14 @@
                     <div class="border-2 border-gray-300 rounded-lg @error('content') border-red-500 @enderror">
                         <div id="editor" class="h-96">{{ old('content') }}</div>
                     </div>
-                    <textarea id="content" name="content" class="hidden">{{ old('content') }}</textarea>
+                    <input type="hidden" id="content" name="content" value="{{ old('content') }}">
                     @error('content')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
+                    <!-- Debug info -->
+                    <div class="mt-2 text-xs text-gray-500">
+                        Status: <span id="content-status">Belum terisi</span>
+                    </div>
                 </div>
             </div>
 
@@ -162,9 +166,38 @@
         }
     });
 
+    // Update content on editor change
+    quill.on('text-change', function() {
+        var content = quill.root.innerHTML.trim();
+        document.querySelector('#content').value = content;
+        document.querySelector('#content-status').textContent = content ? 'Terisi' : 'Kosong';
+    });
+
     // Update hidden form field before submit
-    document.querySelector('form').onsubmit = function() {
-        document.querySelector('#content').value = quill.root.innerHTML;
+    document.querySelector('form').onsubmit = function(e) {
+        // Get the content from Quill editor
+        var content = quill.root.innerHTML.trim();
+
+        // Update the hidden input
+        var contentInput = document.querySelector('#content');
+        contentInput.value = content;
+
+        console.log('Content value:', content);
+        console.log('Hidden input value:', contentInput.value);
+
+        // Validate if content is empty
+        if (!content || content === '<p><br></p>' || content === '<p></p>') {
+            e.preventDefault();
+            alert('Konten berita tidak boleh kosong');
+            return false;
+        }
+
+        // Double check that content is set
+        if (!contentInput.value) {
+            e.preventDefault();
+            alert('Error: Konten tidak tersimpan dengan benar');
+            return false;
+        }
     };
 
     // Handle file upload
