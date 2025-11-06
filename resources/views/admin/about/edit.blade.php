@@ -189,11 +189,27 @@
                     <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
                         <label class="block text-gray-700 font-semibold mb-3" for="description">
                             <i class="fas fa-paragraph mr-2 text-green-500"></i>Deskripsi
+                            <span class="text-red-500">*</span>
                         </label>
-                        <div id="editor" class="bg-white rounded-lg">{!! old('description', $about->description) !!}</div>
-                        <textarea name="description" id="description" class="hidden">{{ old('description', $about->description) }}</textarea>
+                        <div class="description-editor">
+                            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                                <div id="editor" class="prose max-w-none"></div>
+                            </div>
+                            <input type="hidden" name="description" id="description" value="{{ old('description', $about->description) }}">
+                            <div class="mt-2 flex items-start space-x-2 text-gray-600 text-sm">
+                                <i class="fas fa-info-circle mt-0.5"></i>
+                                <span>
+                                    Gunakan toolbar di atas untuk memformat teks.
+                                    <br>
+                                    Tip: Gunakan Ctrl+B untuk bold, Ctrl+I untuk italic, dan Ctrl+U untuk underline.
+                                </span>
+                            </div>
+                        </div>
                         @error('description')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-500 text-sm mt-2">
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
@@ -484,8 +500,8 @@
             });
         }
 
-        // Initialize Quill
-        var quill = new Quill('#editor', {
+        // Initialize Quill with enhanced configuration
+        let quill = new Quill('#editor', {
             theme: 'snow',
             placeholder: 'Masukkan deskripsi perusahaan...',
             modules: {
@@ -495,10 +511,25 @@
                     [{ 'color': [] }, { 'background': [] }],
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                     [{ 'align': [] }],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
                     ['link'],
                     ['clean']
                 ]
             }
+        });
+
+        // Set initial content from the hidden input
+        const descriptionInput = document.getElementById('description');
+        const initialContent = descriptionInput.value;
+
+        // Set the content in the editor
+        if (initialContent) {
+            quill.root.innerHTML = initialContent;
+        }
+
+        // Update description when editor content changes
+        quill.on('text-change', function() {
+            descriptionInput.value = quill.root.innerHTML.trim();
         });
 
         // Initialize Icon Pickers with custom settings
@@ -531,9 +562,34 @@
             document.getElementById('image').click();
         });
 
-        // Update hidden textarea before form submit
-        document.querySelector('form').addEventListener('submit', function() {
-            document.getElementById('description').value = quill.root.innerHTML;
+        // Handle form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            // Get the description content from Quill
+            const description = quill.root.innerHTML.trim();
+
+            // Validate description
+            if (!description || description === '<p><br></p>') {
+                e.preventDefault();
+                alert('Deskripsi tidak boleh kosong');
+                return false;
+            }
+
+            // Update the hidden input with the current content
+            document.getElementById('description').value = description;
+
+            // Log the form data being submitted
+            console.log('Form data - description:', description);
+            return true;
+        });
+
+        // Update hidden input whenever editor content changes
+        quill.on('text-change', function() {
+            const description = quill.root.innerHTML.trim();
+            const hiddenInput = document.getElementById('description');
+            if (hiddenInput) {
+                hiddenInput.value = description;
+                console.log('Editor content updated:', description);
+            }
         });
 
         // Image preview function

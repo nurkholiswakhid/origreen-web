@@ -136,8 +136,14 @@
             <div class="grid md:grid-cols-3 gap-8">
                 @foreach($news as $item)
                 <article class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition">
-                    <div class="h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                        <i class="{{ $item->icon }} text-7xl text-white"></i>
+                    <div class="h-48 relative overflow-hidden">
+                        @if($item->image_url)
+                            <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="h-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                                <i class="fas fa-newspaper text-7xl text-white"></i>
+                            </div>
+                        @endif
                     </div>
                     <div class="p-6">
                         <div class="flex items-center text-sm text-gray-500 mb-3">
@@ -146,7 +152,7 @@
                         </div>
                         <h3 class="text-xl font-bold text-gray-800 mb-3 hover:text-primary transition">{{ $item->title }}</h3>
                         <p class="text-gray-600 mb-4">{{ $item->excerpt }}</p>
-                        <a href="#" class="text-primary font-semibold hover:underline">Baca Selengkapnya →</a>
+                        <a href="{{ route('berita.show', $item->id) }}" class="text-primary font-semibold hover:underline">Baca Selengkapnya →</a>
                     </div>
                 </article>
                 @endforeach

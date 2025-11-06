@@ -11,7 +11,8 @@ use App\Http\Controllers\Admin\SocialMediaController;
 // Static pages
 Route::view('/tentang', 'pages.tentang')->name('tentang');
 Route::view('/wahana', 'pages.wahana')->name('wahana');
-Route::view('/berita', 'pages.berita')->name('berita');
+Route::get('/berita', 'App\Http\Controllers\NewsController@index')->name('berita');
+Route::get('/berita/{news}', 'App\Http\Controllers\NewsController@show')->name('berita.show');
 
 /*
 |--------------------------------------------------------------------------

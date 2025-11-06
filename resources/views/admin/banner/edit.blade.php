@@ -25,9 +25,13 @@
                     [{ 'color': [] }, { 'background': [] }],
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                     [{ 'align': [] }],
-                    ['link', 'image', 'video'],
+                    [{ 'indent': '-1'}, { 'indent': '+1' }],
+                    ['link'],
                     ['clean']
-                ]
+                ],
+                clipboard: {
+                    matchVisual: false
+                }
             }
         });
 
@@ -37,12 +41,45 @@
             quill.root.innerHTML = initialContent;
         }
 
+        // Update hidden form field when content changes
+        quill.on('text-change', function() {
+            document.querySelector('#description').value = quill.root.innerHTML;
+        });
+
+        // Update hidden form field when content changes
+        quill.on('text-change', function() {
+            document.querySelector('#description').value = quill.root.innerHTML;
+        });
+
         // Update hidden form field before submit
         document.querySelector('form').onsubmit = function() {
             document.querySelector('#description').value = quill.root.innerHTML;
         };
     }
 </script>
+
+<style>
+    .ql-toolbar.ql-snow {
+        border-color: #e5e7eb;
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+        background: #f9fafb;
+    }
+    .ql-container.ql-snow {
+        border-color: #e5e7eb;
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+        min-height: 200px;
+    }
+    .ql-editor {
+        min-height: 200px;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    .ql-editor p {
+        margin-bottom: 1rem;
+    }
+</style>
 @endpush
 
 
@@ -71,16 +108,28 @@
             </div>
 
             <!-- Deskripsi dengan Quill -->
-            <div class="mb-4">
+            <div class="mb-6">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
                     Deskripsi
+                    <span class="text-red-500">*</span>
                 </label>
-                <div class="bg-white">
-                    <div id="editor" style="min-height: 200px; background: white;">{!! old('description', $banner->description) !!}</div>
+                <div class="bg-white rounded-lg shadow-sm">
+                    <div id="editor" class="bg-white prose max-w-none">{!! old('description', $banner->description) !!}</div>
                 </div>
                 <textarea name="description" id="description" class="hidden">{!! old('description', $banner->description) !!}</textarea>
+                <div class="mt-2 flex items-start space-x-2 text-gray-600 text-sm">
+                    <i class="fas fa-info-circle mt-0.5"></i>
+                    <span>
+                        Gunakan toolbar di atas untuk memformat teks. Teks akan otomatis tersimpan saat Anda mengetik.
+                        <br>
+                        Tip: Gunakan Ctrl+B untuk bold, Ctrl+I untuk italic, dan Ctrl+U untuk underline.
+                    </span>
+                </div>
                 @error('description')
-                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-2">
+                        <i class="fas fa-exclamation-circle mr-1"></i>
+                        {{ $message }}
+                    </p>
                 @enderror
             </div>
             <!-- Upload Gambar -->
