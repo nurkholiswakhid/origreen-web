@@ -115,7 +115,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-gray-800">Lokasi Kami</h3>
                 </div>
-                                <div class="rounded-xl overflow-hidden h-[400px] mb-4">
+                    <div class="rounded-xl overflow-hidden h-[400px] mb-4">
                     <iframe
                         src="{{ $mapSetting->map_embed_url }}"
                         width="100%"
