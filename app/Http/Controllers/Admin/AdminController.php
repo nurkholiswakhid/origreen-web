@@ -23,7 +23,7 @@ class AdminController extends Controller
         $recentNews = News::latest('published_at')
             ->take(3)
             ->get();
-        
+
         // Mengambil testimoni terbaru
         $recentTestimonials = Testimonial::latest()
             ->take(3)
