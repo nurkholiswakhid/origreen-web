@@ -96,12 +96,12 @@
                                 <i class="fas fa-edit mr-2"></i>
                                 <span>Edit</span>
                             </a>
-                            <form action="{{ route('admin.news.destroy', $item) }}" method="POST" class="inline">
+                            <form action="{{ route('admin.news.destroy', $item) }}" method="POST" class="inline delete-form"
+                                data-title="{{ $item->title }}">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit"
-                                        class="inline-flex items-center px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus berita ini?')">
+                                <button type="button"
+                                        class="inline-flex items-center px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 hover:scale-105 delete-btn">
                                     <i class="fas fa-trash-alt mr-2"></i>
                                     <span>Hapus</span>
                                 </button>
@@ -226,24 +226,18 @@ function closePreviewModal() {
 // Enhanced table interactivity
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
     const tableRows = document.querySelectorAll('tbody tr');
 
     function filterTable() {
         const searchTerm = searchInput.value.toLowerCase();
-        const statusTerm = statusFilter.value;
 
         tableRows.forEach(row => {
             const title = row.querySelector('.text-gray-900').textContent.toLowerCase();
             const excerpt = row.querySelector('.text-gray-500').textContent.toLowerCase();
-            const status = row.querySelector('.inline-flex').textContent.trim();
 
             const matchesSearch = title.includes(searchTerm) || excerpt.includes(searchTerm);
-            const matchesStatus = statusTerm === 'all' ||
-                                (statusTerm === 'published' && status === 'Dipublikasi') ||
-                                (statusTerm === 'scheduled' && status === 'Dijadwalkan');
 
-            if (matchesSearch && matchesStatus) {
+            if (matchesSearch) {
                 row.style.display = '';
                 row.classList.add('animate-fade-in');
             } else {
@@ -253,12 +247,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     searchInput.addEventListener('input', filterTable);
-    statusFilter.addEventListener('change', filterTable);
 
     // Close modal when clicking outside
     document.getElementById('previewModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closePreviewModal();
+        }
+    });
+
+    // Use event delegation for delete buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-btn')) {
+            e.preventDefault();
+            const button = e.target.closest('.delete-btn');
+            const form = button.closest('.delete-form');
+            const title = form.getAttribute('data-title');
+
+            Swal.fire({
+                title: 'Hapus Berita?',
+                text: `Apakah Anda yakin ingin menghapus "${title}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         }
     });
 });

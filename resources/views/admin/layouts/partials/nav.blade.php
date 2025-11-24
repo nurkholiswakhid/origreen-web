@@ -4,7 +4,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center">
                 <!-- Mobile menu button -->
-                <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 hover:text-gray-700 lg:hidden">
+                <button onclick="toggleSidebar()" class="text-gray-500 hover:text-gray-700 lg:hidden">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
                 <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold text-primary ml-4">

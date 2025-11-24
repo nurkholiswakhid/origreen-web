@@ -126,12 +126,12 @@
                                    title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('admin.facilities.destroy', $facility) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.facilities.destroy', $facility) }}" method="POST" class="inline delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit"
-                                        class="text-red-600 hover:text-red-900 transition-colors"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus {{ $facility->name }}?')"
+                                    <button type="button"
+                                        class="text-red-600 hover:text-red-900 transition-colors delete-btn"
+                                        data-name="{{ $facility->name }}"
                                         title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -150,6 +150,32 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Handle delete buttons with event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-btn')) {
+            e.preventDefault();
+            const button = e.target.closest('.delete-btn');
+            const form = button.closest('.delete-form');
+            const name = button.getAttribute('data-name');
+
+            Swal.fire({
+                title: 'Hapus Wahana/Fasilitas?',
+                text: `Apakah Anda yakin ingin menghapus "${name}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    });
+
+    // Sortable
     var el = document.getElementById('sortable-facilities');
     var sortable = new Sortable(el, {
         animation: 150,
@@ -180,32 +206,26 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Tampilkan notifikasi sukses jika ada
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Urutan wahana & fasilitas berhasil diperbarui',
-                            showConfirmButton: false,
-                            timer: 1500,
-                            toast: true,
-                            position: 'top-end'
-                        });
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Tampilkan notifikasi error jika ada
-                if (typeof Swal !== 'undefined') {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Terjadi kesalahan saat memperbarui urutan',
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Urutan wahana & fasilitas berhasil diperbarui',
+                        showConfirmButton: false,
+                        timer: 1500,
                         toast: true,
                         position: 'top-end'
                     });
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan saat memperbarui urutan',
+                    toast: true,
+                    position: 'top-end'
+                });
             });
         }
     });

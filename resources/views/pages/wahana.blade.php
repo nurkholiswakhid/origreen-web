@@ -17,12 +17,15 @@
                         @forelse($wahana as $item)
                         <div class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition group">
                             <div class="h-48 bg-gradient-to-br from-primary to-secondary flex items-center justify-center overflow-hidden">
-                                @if($item->display_type === 'image' && $item->image_url)
-                                    <img src="{{ $item->image_url }}"
+                                @if($item->display_type === 'icon')
+                                    <i class="{{ $item->main_icon ?? $item->icon }} text-7xl text-white group-hover:scale-110 transition"></i>
+                                @elseif($item->display_type === 'image' && $item->image_url)
+                                    <img src="{{ asset('storage/' . str_replace('/storage/', '', $item->image_url)) }}"
                                          alt="{{ $item->name }}"
-                                         class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                                         class="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                                         onerror="this.onerror=null; this.src='{{ asset('images/default-facility.png') }}'; console.log('Error loading image: {{ $item->image_url }}');">
                                 @else
-                                    <i class="{{ $item->icon ?? 'fas fa-star' }} text-7xl text-white group-hover:scale-110 transition"></i>
+                                    <i class="fas fa-image text-7xl text-white group-hover:scale-110 transition"></i>
                                 @endif
                             </div>
                             <div class="p-6">
@@ -53,12 +56,15 @@
                         @forelse($fasilitas as $item)
                         <div class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition group">
                             <div class="h-48 bg-gradient-to-br from-secondary to-dark flex items-center justify-center overflow-hidden">
-                                @if($item->display_type === 'image' && $item->image_url)
-                                    <img src="{{ $item->image_url }}"
+                                @if($item->display_type === 'icon')
+                                    <i class="{{ $item->main_icon ?? $item->icon }} text-7xl text-white group-hover:scale-110 transition"></i>
+                                @elseif($item->display_type === 'image' && $item->image_url)
+                                    <img src="{{ asset('storage/' . str_replace('/storage/', '', $item->image_url)) }}"
                                          alt="{{ $item->name }}"
-                                         class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                                         class="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                                         onerror="this.onerror=null; this.src='{{ asset('images/default-facility.png') }}'; console.log('Error loading image: {{ $item->image_url }}');">
                                 @else
-                                    <i class="{{ $item->icon ?? 'fas fa-star' }} text-7xl text-white group-hover:scale-110 transition"></i>
+                                    <i class="fas fa-image text-7xl text-white group-hover:scale-110 transition"></i>
                                 @endif
                             </div>
                             <div class="p-6">

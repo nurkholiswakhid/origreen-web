@@ -85,12 +85,12 @@
                                     </a>
                                     <form action="{{ route('admin.faqs.destroy', $faq) }}"
                                           method="POST"
-                                          class="inline"
-                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus FAQ ini?')">
+                                          class="inline delete-form"
+                                          data-question="{{ $faq->question }}">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="bg-red-50 text-red-600 p-2 rounded-lg hover:bg-red-100 transition-all duration-300 border-2 border-red-200 group">
+                                        <button type="button"
+                                                class="bg-red-50 text-red-600 p-2 rounded-lg hover:bg-red-100 transition-all duration-300 border-2 border-red-200 group delete-btn">
                                             <i class="fas fa-trash transform group-hover:scale-110 transition-transform"></i>
                                         </button>
                                     </form>
@@ -156,27 +156,45 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Tampilkan notifikasi sukses jika ada
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Urutan FAQ berhasil diperbarui',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
-                    }
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Urutan FAQ berhasil diperbarui',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                // Tampilkan notifikasi error jika ada
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Terjadi kesalahan saat memperbarui urutan'
-                    });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan saat memperbarui urutan'
+                });
+            });
+        }
+    });
+
+    // Handle delete buttons
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const form = this.closest('.delete-form');
+            const question = form.getAttribute('data-question');
+
+            Swal.fire({
+                title: 'Hapus FAQ?',
+                text: `Apakah Anda yakin ingin menghapus FAQ ini?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
                 }
             });
         }

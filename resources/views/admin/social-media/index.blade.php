@@ -137,12 +137,12 @@
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form action="{{ route('admin.social-media.destroy', ['socialMedia' => $social->id]) }}"
-                                                method="POST" class="inline-block"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus social media ini?');">
+                                                method="POST" class="inline-block delete-form"
+                                                data-name="{{ $social->name }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
-                                                    class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                                <button type="button"
+                                                    class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors delete-btn">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -223,6 +223,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     notification.style.opacity = '0';
                     setTimeout(() => notification.remove(), 300);
                 }, 3000);
+            });
+        }
+    });
+
+    // Handle delete buttons with event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-btn')) {
+            e.preventDefault();
+            const button = e.target.closest('.delete-btn');
+            const form = button.closest('.delete-form');
+            const name = form.getAttribute('data-name');
+
+            Swal.fire({
+                title: 'Hapus Social Media?',
+                text: `Apakah Anda yakin ingin menghapus "${name}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
         }
     });

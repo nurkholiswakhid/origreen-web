@@ -16,7 +16,7 @@
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/2 mb-10 md:mb-0">
                     <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">{{ $banner->title }}</h1>
-                    <p class="text-xl mb-8 text-white/90">{{ $banner->description }}</p>
+                    <p class="text-xl mb-1 text-white/90">{!! $banner->description !!}</p>
                     <div class="space-x-4">
                         <a href="{{ $banner->button1_url }}" class="bg-white text-primary px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition inline-block shadow-lg hover:shadow-xl">{{ $banner->button1_text }}</a>
                         <a href="{{ $banner->button2_url }}" class="border-2 border-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-primary transition inline-block backdrop-blur-sm">{{ $banner->button2_text }}</a>

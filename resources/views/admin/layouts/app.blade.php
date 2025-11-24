@@ -22,18 +22,25 @@
 
     <style>
         [x-cloak] { display: none !important; }
+        @media (min-width: 1024px) {
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
     </style>
 
     {{-- Tambahkan ini agar halaman lain bisa menambah CSS seperti Summernote --}}
     @stack('styles')
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body class="bg-gray-100">
-    <div x-data="{ sidebarOpen: false }">
+    <div id="admin-container">
         @include('admin.layouts.partials.nav')
 
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 bg-white shadow-lg lg:w-64 w-3/4 transition-transform duration-300 transform lg:translate-x-0 z-20"
-            :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-white shadow-lg lg:w-64 w-3/4 transition-transform duration-300 transform lg:translate-x-0 z-20 -translate-x-full lg:translate-x-0">
             <div class="flex flex-col h-full">
                 <!-- Sidebar Header -->
                 <div class="h-16"></div>
@@ -56,7 +63,7 @@
         </aside>
 
         <!-- Overlay -->
-        <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black opacity-50 z-10 lg:hidden"></div>
+        <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black opacity-50 z-10 lg:hidden hidden" onclick="closeSidebar()"></div>
 
         <!-- Main Content -->
         <main class="lg:ml-64 pt-16">
@@ -68,6 +75,39 @@
     </div>
 
     <script src="//unpkg.com/alpinejs" defer></script>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const isOpen = !sidebar.classList.contains('-translate-x-full');
+
+            if (isOpen) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
+
+        // Close sidebar on window resize to lg
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 1024) {
+                closeSidebar();
+            }
+        });
+    </script>
 
     {{-- Tambahkan ini agar halaman bisa menambah JS seperti Summernote --}}
     @stack('scripts')

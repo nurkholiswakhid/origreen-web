@@ -122,12 +122,12 @@
                                class="p-2 text-primary hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('admin.testimonials.destroy', $testimonial) }}" method="POST" class="inline">
+                            <form action="{{ route('admin.testimonials.destroy', $testimonial) }}" method="POST" class="inline delete-form">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit"
-                                        class="p-2 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-colors duration-300"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus testimoni ini?')">
+                                <button type="button"
+                                        class="p-2 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-colors duration-300 delete-btn"
+                                        data-id="{{ $testimonial->id }}">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>
@@ -307,6 +307,30 @@ function showTestimonialContent(content, name) {
 document.getElementById('testimonialModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeTestimonialModal();
+    }
+});
+
+// Handle delete buttons with event delegation
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.delete-btn')) {
+        e.preventDefault();
+        const button = e.target.closest('.delete-btn');
+        const form = button.closest('.delete-form');
+
+        Swal.fire({
+            title: 'Hapus Testimoni?',
+            text: 'Apakah Anda yakin ingin menghapus testimoni ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
     }
 });
 </script>
