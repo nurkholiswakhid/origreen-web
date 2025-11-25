@@ -13,7 +13,7 @@ class FaqControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->admin = User::factory()->create([
             'is_admin' => true,
             'email' => 'admin-faq-' . uniqid() . '@example.com',

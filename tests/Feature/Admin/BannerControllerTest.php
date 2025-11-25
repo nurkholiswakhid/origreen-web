@@ -13,7 +13,7 @@ class BannerControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->admin = User::factory()->create([
             'is_admin' => true,
             'email' => 'admin-banner-' . uniqid() . '@example.com',
@@ -52,13 +52,13 @@ class BannerControllerTest extends TestCase
     {
         // Banner routes don't support destroy, so we test that banner model can be used
         $banner = Banner::factory()->create();
-        
+
         $this->assertTrue($banner->exists());
-        
+
         // Verify we can delete it directly
         $id = $banner->id;
         $banner->delete();
-        
+
         $this->assertNull(Banner::find($id));
     }
 }

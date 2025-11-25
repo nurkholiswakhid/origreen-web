@@ -22,7 +22,7 @@ class UserTest extends TestCase
     public function test_user_can_be_updated()
     {
         $user = User::factory()->create();
-        
+
         $user->update([
             'name' => 'Jane Doe',
             'email' => 'jane-' . time() . '@example.com',
@@ -44,7 +44,7 @@ class UserTest extends TestCase
     public function test_user_has_is_admin_attribute()
     {
         $user = User::factory()->create(['is_admin' => false]);
-        
+
         $this->assertFalse($user->is_admin);
     }
 
@@ -72,7 +72,7 @@ class UserTest extends TestCase
     public function test_user_password_is_hidden_on_serialization()
     {
         $user = User::factory()->create();
-        
+
         $hidden = $user->getHidden();
         $this->assertContains('password', $hidden);
         $this->assertContains('remember_token', $hidden);

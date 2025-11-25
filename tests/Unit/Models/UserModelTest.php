@@ -10,7 +10,7 @@ class UserModelTest extends TestCase
     public function test_user_has_api_tokens_trait()
     {
         $user = User::factory()->create();
-        
+
         // Check if method from HasApiTokens exists
         $this->assertTrue(method_exists($user, 'tokens'));
     }
@@ -18,7 +18,7 @@ class UserModelTest extends TestCase
     public function test_user_has_factory()
     {
         $user = User::factory()->make();
-        
+
         $this->assertNotNull($user->email);
         $this->assertNotNull($user->name);
     }
@@ -27,14 +27,14 @@ class UserModelTest extends TestCase
     {
         $user = User::factory()->create();
         $casts = $user->getCasts();
-        
+
         $this->assertArrayHasKey('email_verified_at', $casts);
     }
 
     public function test_user_is_authenticatable()
     {
         $user = User::factory()->create();
-        
+
         // Check if user implements Authenticatable
         $this->assertInstanceOf(\Illuminate\Contracts\Auth\Authenticatable::class, $user);
     }

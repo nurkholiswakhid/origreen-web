@@ -13,7 +13,7 @@ class NewsControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->admin = User::factory()->create([
             'is_admin' => true,
             'email' => 'admin-news-' . uniqid() . '@example.com',
