@@ -249,7 +249,7 @@
                         }
                         document.getElementById('image_url').value = data.location;
                         document.getElementById('preview-image').src = data.location;
-                        
+
                         // Tampilkan notifikasi sukses
                         Swal.fire({
                             icon: 'success',

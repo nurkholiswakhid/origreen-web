@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Validasi Nomor Telepon
         const phoneValue = phoneInput.value.trim();
         const phoneRegex = /^(\+62|0)[0-9]{9,12}$/;
-        
+
         if (!phoneValue) {
             errorMessage += '• Nomor telepon tidak boleh kosong\n';
             isValid = false;
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Validasi Email
         const emailValue = emailInput.value.trim();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
+
         if (!emailValue) {
             errorMessage += '• Email tidak boleh kosong\n';
             isValid = false;
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
     phoneInput.addEventListener('blur', function() {
         const phoneRegex = /^(\+62|0)[0-9]{9,12}$/;
         const value = this.value.trim().replace(/\s/g, '');
-        
+
         if (value && !phoneRegex.test(value)) {
             this.classList.add('border-red-500');
             this.classList.remove('border-gray-200');
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
     emailInput.addEventListener('blur', function() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const value = this.value.trim();
-        
+
         if (value && !emailRegex.test(value)) {
             this.classList.add('border-red-500');
             this.classList.remove('border-gray-200');

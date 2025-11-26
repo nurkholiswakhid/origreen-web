@@ -137,9 +137,9 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Initializing FAQ drag and drop...');
-    
+
     const sortableContainer = document.getElementById('sortable-faqs');
-    
+
     if (!sortableContainer) {
         console.error('Sortable container not found');
         return;
@@ -154,19 +154,19 @@ document.addEventListener('DOMContentLoaded', function() {
         dragClass: 'sortable-drag',
         forceFallback: false,
         direction: 'vertical',
-        
+
         onStart: function(evt) {
             console.log('Drag started on:', evt.item.dataset.id);
         },
-        
+
         onEnd: function(evt) {
             console.log('Drag ended');
-            
+
             // Ambil semua items dan update urutan
             const items = [];
             const rows = document.querySelectorAll('#sortable-faqs tr[data-id]');
             console.log('Total rows:', rows.length);
-            
+
             rows.forEach((tr, index) => {
                 const id = tr.dataset.id;
                 const order = index + 1;
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <i class="fas fa-spinner fa-spin"></i>
                 <span>Menyimpan perubahan urutan...</span>
             `;
-            
+
             const alertContainer = document.querySelector('main .p-6');
             if (alertContainer) {
                 alertContainer.insertBefore(loadingDiv, alertContainer.firstChild);
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Kirim data ke server
             const reorderUrl = '{{ route('admin.faqs.reorder') }}';
             console.log('Sending to URL:', reorderUrl);
-            
+
             fetch(reorderUrl, {
                 method: 'POST',
                 headers: {
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => {
                 console.log('Response status:', response.status);
                 console.log('Response headers:', response.headers);
-                
+
                 if (!response.ok) {
                     return response.text().then(text => {
                         console.error('Error response:', text);
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 console.log('Success response:', data);
-                
+
                 if (data.success) {
                     // Update tampilan urutan di tabel
                     items.forEach(item => {
@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p><strong>Berhasil!</strong> Urutan FAQ berhasil diperbarui</p>
                         </div>
                     `;
-                    
+
                     const mainContainer = document.querySelector('main .p-6');
                     if (mainContainer) {
                         const existingAlert = mainContainer.querySelector('#loading-notification');
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Full error:', error);
-                
+
                 // Tampilkan notifikasi error yang sama seperti error success
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6';
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p><strong>Gagal!</strong> ${error.message}</p>
                     </div>
                 `;
-                
+
                 const mainContainer = document.querySelector('main .p-6');
                 if (mainContainer) {
                     const existingAlert = mainContainer.querySelector('#loading-notification');

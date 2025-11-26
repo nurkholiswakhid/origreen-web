@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <i class="fas fa-spinner fa-spin"></i>
                 <span>Menyimpan perubahan urutan...</span>
             `;
-            
+
             const alertContainer = document.querySelector('main .p-6, .bg-white.rounded-lg');
             if (alertContainer) {
                 alertContainer.insertBefore(loadingDiv, alertContainer.firstChild);
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p><strong>Berhasil!</strong> Urutan social media berhasil diperbarui</p>
                         </div>
                     `;
-                    
+
                     const container = document.querySelector('main .p-6, .bg-white.rounded-lg');
                     if (container) {
                         const existingAlert = container.querySelector('#loading-notification');
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p><strong>Gagal!</strong> Terjadi kesalahan saat memperbarui urutan</p>
                     </div>
                 `;
-                
+
                 const container = document.querySelector('main .p-6, .bg-white.rounded-lg');
                 if (container) {
                     const existingAlert = container.querySelector('#loading-notification');
@@ -297,12 +297,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.toggle-status-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const socialMediaId = this.getAttribute('data-id');
             const button = this.querySelector('button');
             const currentStatus = button.classList.contains('bg-green-100');
             const formAction = this.action;
-            
+
             // Disable button saat loading
             button.disabled = true;
             const originalHtml = button.innerHTML;
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 console.log('Response data:', data);
-                
+
                 // Update tampilan button
                 const newStatus = !currentStatus;
                 if (newStatus) {
@@ -361,11 +361,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p><strong>Berhasil!</strong> Status social media berhasil diperbarui</p>
                     </div>
                 `;
-                
+
                 const container = document.querySelector('main .p-6') || document.querySelector('.bg-white.rounded-lg');
                 if (container) {
                     container.insertBefore(successDiv, container.firstChild);
-                    
+
                     // Auto-hide notifikasi setelah 3 detik
                     setTimeout(() => {
                         successDiv.style.transition = 'opacity 0.3s ease-out';
@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Full error:', error);
                 button.disabled = false;
                 button.innerHTML = originalHtml;
-                
+
                 // Tampilkan notifikasi error
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6';
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p><strong>Gagal!</strong> ${error.message}</p>
                     </div>
                 `;
-                
+
                 const container = document.querySelector('main .p-6') || document.querySelector('.bg-white.rounded-lg');
                 if (container) {
                     container.insertBefore(errorDiv, container.firstChild);
