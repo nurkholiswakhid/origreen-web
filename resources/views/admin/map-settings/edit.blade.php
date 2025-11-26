@@ -2,6 +2,10 @@
 
 @section('title', 'Edit Pengaturan Peta')
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@endpush
+
 @section('content')
 <div class="mb-6">
     <div class="flex items-center gap-3">
@@ -22,7 +26,7 @@
             Informasi Kontak & Lokasi
         </h2>
     </div>
-    <form action="{{ route('admin.map-settings.update') }}" method="POST" class="p-6">
+    <form action="{{ route('admin.map-settings.update') }}" method="POST" class="p-6" id="mapSettingsForm">
         @csrf
         @method('PUT')
 
@@ -182,4 +186,86 @@
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('mapSettingsForm');
+    const phoneInput = document.getElementById('phone');
+    const emailInput = document.getElementById('email');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        let isValid = true;
+        let errorMessage = '';
+
+        // Validasi Nomor Telepon
+        const phoneValue = phoneInput.value.trim();
+        const phoneRegex = /^(\+62|0)[0-9]{9,12}$/;
+        
+        if (!phoneValue) {
+            errorMessage += '• Nomor telepon tidak boleh kosong\n';
+            isValid = false;
+        } else if (!phoneRegex.test(phoneValue.replace(/\s/g, ''))) {
+            errorMessage += '• Format nomor telepon salah (gunakan +62 atau 0 diikuti 9-12 digit angka)\n';
+            isValid = false;
+        }
+
+        // Validasi Email
+        const emailValue = emailInput.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!emailValue) {
+            errorMessage += '• Email tidak boleh kosong\n';
+            isValid = false;
+        } else if (!emailRegex.test(emailValue)) {
+            errorMessage += '• Format email salah (contoh: info@example.com)\n';
+            isValid = false;
+        }
+
+        // Jika ada error, tampilkan SweetAlert
+        if (!isValid) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                html: errorMessage.replace(/\n/g, '<br>'),
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: 'Kembali ke Form'
+            });
+            return false;
+        }
+
+        // Jika valid, submit form
+        form.submit();
+    });
+
+    // Real-time validation untuk telepon
+    phoneInput.addEventListener('blur', function() {
+        const phoneRegex = /^(\+62|0)[0-9]{9,12}$/;
+        const value = this.value.trim().replace(/\s/g, '');
+        
+        if (value && !phoneRegex.test(value)) {
+            this.classList.add('border-red-500');
+            this.classList.remove('border-gray-200');
+        } else {
+            this.classList.remove('border-red-500');
+            this.classList.add('border-gray-200');
+        }
+    });
+
+    // Real-time validation untuk email
+    emailInput.addEventListener('blur', function() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const value = this.value.trim();
+        
+        if (value && !emailRegex.test(value)) {
+            this.classList.add('border-red-500');
+            this.classList.remove('border-gray-200');
+        } else {
+            this.classList.remove('border-red-500');
+            this.classList.add('border-gray-200');
+        }
+    });
+});
+</script>
 @endsection

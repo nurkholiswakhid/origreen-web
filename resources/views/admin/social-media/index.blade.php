@@ -117,13 +117,17 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
-                                            {{ $social->is_active
-                                                ? 'bg-green-100 text-green-800 border border-green-200'
-                                                : 'bg-red-100 text-red-800 border border-red-200' }}">
-                                            <i class="fas {{ $social->is_active ? 'fa-check' : 'fa-times' }} mr-1"></i>
-                                            {{ $social->is_active ? 'Aktif' : 'Tidak Aktif' }}
-                                        </span>
+                                        <form action="{{ route('admin.social-media.toggle', ['socialMedia' => $social->id]) }}" method="POST" class="inline toggle-status-form" data-id="{{ $social->id }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition-all duration-300 hover:shadow-md
+                                                {{ $social->is_active
+                                                    ? 'bg-green-100 text-green-800 border border-green-200 hover:bg-green-200'
+                                                    : 'bg-red-100 text-red-800 border border-red-200 hover:bg-red-200' }}">
+                                                <i class="fas {{ $social->is_active ? 'fa-check' : 'fa-times' }} mr-1"></i>
+                                                {{ $social->is_active ? 'Aktif' : 'Tidak Aktif' }}
+                                            </button>
+                                        </form>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-800 rounded-lg text-sm font-medium sort-order">
@@ -183,6 +187,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.querySelector('.sort-order').textContent = index + 1;
             });
 
+            // Tampilkan loading notification
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loading-notification';
+            loadingDiv.className = 'bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6 flex items-center gap-2';
+            loadingDiv.innerHTML = `
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Menyimpan perubahan urutan...</span>
+            `;
+            
+            const alertContainer = document.querySelector('main .p-6, .bg-white.rounded-lg');
+            if (alertContainer) {
+                alertContainer.insertBefore(loadingDiv, alertContainer.firstChild);
+            }
+
             // Send to server
             fetch('{{ route('admin.social-media.reorder') }}', {
                 method: 'POST',
@@ -195,34 +213,57 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Show success notification
-                    const notification = document.createElement('div');
-                    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 flex items-center';
-                    notification.innerHTML = `
-                        <i class="fas fa-check-circle mr-2"></i>
-                        <span>Urutan berhasil diperbarui</span>
+                    // Show success notification seperti alert box
+                    const successDiv = document.createElement('div');
+                    successDiv.className = 'bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6';
+                    successDiv.setAttribute('role', 'alert');
+                    successDiv.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle"></i>
+                            <p><strong>Berhasil!</strong> Urutan social media berhasil diperbarui</p>
+                        </div>
                     `;
-                    document.body.appendChild(notification);
+                    
+                    const container = document.querySelector('main .p-6, .bg-white.rounded-lg');
+                    if (container) {
+                        const existingAlert = container.querySelector('#loading-notification');
+                        if (existingAlert) {
+                            existingAlert.replaceWith(successDiv);
+                        } else {
+                            container.insertBefore(successDiv, container.firstChild);
+                        }
+                    }
+
+                    // Auto-hide notifikasi setelah 3 detik
                     setTimeout(() => {
-                        notification.style.opacity = '0';
-                        setTimeout(() => notification.remove(), 300);
+                        successDiv.style.transition = 'opacity 0.3s ease-out';
+                        successDiv.style.opacity = '0';
+                        setTimeout(() => successDiv.remove(), 300);
                     }, 3000);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                // Show error notification
-                const notification = document.createElement('div');
-                notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 flex items-center';
-                notification.innerHTML = `
-                    <i class="fas fa-exclamation-circle mr-2"></i>
-                    <span>Gagal memperbarui urutan</span>
+                // Show error notification seperti alert box
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6';
+                errorDiv.setAttribute('role', 'alert');
+                errorDiv.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p><strong>Gagal!</strong> Terjadi kesalahan saat memperbarui urutan</p>
+                    </div>
                 `;
-                document.body.appendChild(notification);
-                setTimeout(() => {
-                    notification.style.opacity = '0';
-                    setTimeout(() => notification.remove(), 300);
-                }, 3000);
+                
+                const container = document.querySelector('main .p-6, .bg-white.rounded-lg');
+                if (container) {
+                    const existingAlert = container.querySelector('#loading-notification');
+                    if (existingAlert) {
+                        existingAlert.replaceWith(errorDiv);
+                    } else {
+                        container.insertBefore(errorDiv, container.firstChild);
+                    }
+                }
             });
         }
     });
@@ -250,6 +291,113 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+    });
+
+    // Handle toggle status dengan AJAX
+    document.querySelectorAll('.toggle-status-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const socialMediaId = this.getAttribute('data-id');
+            const button = this.querySelector('button');
+            const currentStatus = button.classList.contains('bg-green-100');
+            const formAction = this.action;
+            
+            // Disable button saat loading
+            button.disabled = true;
+            const originalHtml = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengubah...';
+
+            fetch(formAction, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        console.error('Error response:', text);
+                        throw new Error(`HTTP ${response.status}: ${text}`);
+                    });
+                }
+                // Handle berbagai tipe response
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    // Jika response bukan JSON tapi status 200, anggap sukses
+                    return { success: true };
+                }
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                
+                // Update tampilan button
+                const newStatus = !currentStatus;
+                if (newStatus) {
+                    // Ubah ke Aktif
+                    button.classList.remove('bg-red-100', 'text-red-800', 'border-red-200', 'hover:bg-red-200');
+                    button.classList.add('bg-green-100', 'text-green-800', 'border-green-200', 'hover:bg-green-200');
+                    button.innerHTML = '<i class="fas fa-check mr-1"></i>Aktif';
+                } else {
+                    // Ubah ke Tidak Aktif
+                    button.classList.remove('bg-green-100', 'text-green-800', 'border-green-200', 'hover:bg-green-200');
+                    button.classList.add('bg-red-100', 'text-red-800', 'border-red-200', 'hover:bg-red-200');
+                    button.innerHTML = '<i class="fas fa-times mr-1"></i>Tidak Aktif';
+                }
+
+                // Tampilkan notifikasi sukses
+                const successDiv = document.createElement('div');
+                successDiv.className = 'bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6';
+                successDiv.setAttribute('role', 'alert');
+                successDiv.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-check-circle"></i>
+                        <p><strong>Berhasil!</strong> Status social media berhasil diperbarui</p>
+                    </div>
+                `;
+                
+                const container = document.querySelector('main .p-6') || document.querySelector('.bg-white.rounded-lg');
+                if (container) {
+                    container.insertBefore(successDiv, container.firstChild);
+                    
+                    // Auto-hide notifikasi setelah 3 detik
+                    setTimeout(() => {
+                        successDiv.style.transition = 'opacity 0.3s ease-out';
+                        successDiv.style.opacity = '0';
+                        setTimeout(() => successDiv.remove(), 300);
+                    }, 3000);
+                }
+
+                button.disabled = false;
+            })
+            .catch(error => {
+                console.error('Full error:', error);
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+                
+                // Tampilkan notifikasi error
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6';
+                errorDiv.setAttribute('role', 'alert');
+                errorDiv.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p><strong>Gagal!</strong> ${error.message}</p>
+                    </div>
+                `;
+                
+                const container = document.querySelector('main .p-6') || document.querySelector('.bg-white.rounded-lg');
+                if (container) {
+                    container.insertBefore(errorDiv, container.firstChild);
+                }
+            });
+        });
     });
 
     // Add tooltips for drag handle

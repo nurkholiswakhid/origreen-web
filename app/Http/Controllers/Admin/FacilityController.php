@@ -79,8 +79,6 @@ class FacilityController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'duration' => 'nullable|string|max:255',
             'type' => 'required|in:wahana,fasilitas',
-            'order' => 'required|integer|min:0',
-            'is_active' => 'required|boolean',
         ]);
 
         $data = $request->except(['image', '_token', '_method']);

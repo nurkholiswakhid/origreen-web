@@ -55,6 +55,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
         'parameters' => ['social-media' => 'socialMedia']
     ]);
     Route::post('social-media/reorder', [SocialMediaController::class, 'reorder'])->name('admin.social-media.reorder');
+    Route::put('social-media/{socialMedia}/toggle', [SocialMediaController::class, 'toggle'])->name('admin.social-media.toggle');
 
     // About Routes
     Route::get('/about/edit', [AboutController::class, 'edit'])->name('admin.about.edit');

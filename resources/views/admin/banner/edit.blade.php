@@ -8,6 +8,7 @@
 
 @push('scripts')
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         initQuillEditor();
@@ -174,9 +175,47 @@
             <script>
             function handleImageUpload(input) {
                 if (input.files && input.files[0]) {
+                    // Validasi ukuran file
+                    const maxSize = 2 * 1024 * 1024; // 2MB
+                    if (input.files[0].size > maxSize) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ukuran File Terlalu Besar',
+                            text: 'Maksimal ukuran file adalah 2MB. File Anda: ' + (input.files[0].size / 1024 / 1024).toFixed(2) + 'MB',
+                            confirmButtonColor: '#3b82f6'
+                        });
+                        input.value = '';
+                        return;
+                    }
+
+                    // Validasi tipe file
+                    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+                    if (!allowedTypes.includes(input.files[0].type)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Tipe File Tidak Didukung',
+                            text: 'Hanya file PNG, JPG, GIF yang diperbolehkan. File Anda: ' + input.files[0].type,
+                            confirmButtonColor: '#3b82f6'
+                        });
+                        input.value = '';
+                        return;
+                    }
+
                     const formData = new FormData();
                     formData.append('image', input.files[0]);
                     formData.append('_token', '{{ csrf_token() }}');
+
+                    // Tampilkan loading indicator
+                    Swal.fire({
+                        title: 'Sedang Mengupload...',
+                        text: 'Silahkan tunggu',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        didOpen: (toast) => {
+                            Swal.showLoading();
+                        }
+                    });
 
                     // Get the full URL of the current page
                     const baseUrl = window.location.protocol + '//' + window.location.host;
@@ -210,21 +249,32 @@
                         }
                         document.getElementById('image_url').value = data.location;
                         document.getElementById('preview-image').src = data.location;
-                        // Tambahkan notifikasi sukses
-                        alert('Gambar berhasil diupload!');
+                        
+                        // Tampilkan notifikasi sukses
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Gambar Berhasil Diupload!',
+                            text: 'File gambar telah tersimpan dengan baik',
+                            confirmButtonColor: '#3b82f6'
+                        });
                     })
                     .catch(error => {
                         console.error('Error details:', error);
-                        let errorMessage = 'Gagal mengupload gambar: ';
+                        let errorMessage = 'Terjadi kesalahan saat mengupload gambar';
 
                         // Handle network errors
                         if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
-                            errorMessage += 'Koneksi gagal. Pastikan Anda terhubung ke internet dan URL server benar.';
+                            errorMessage = 'Koneksi gagal. Pastikan Anda terhubung ke internet dan URL server benar.';
                         } else {
-                            errorMessage += error.message || 'Terjadi kesalahan yang tidak diketahui';
+                            errorMessage = error.message || 'Terjadi kesalahan yang tidak diketahui';
                         }
 
-                        alert(errorMessage);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal Mengupload Gambar',
+                            text: errorMessage,
+                            confirmButtonColor: '#ef4444'
+                        });
                     });
                 }
             }

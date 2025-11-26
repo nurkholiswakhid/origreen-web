@@ -81,4 +81,20 @@ class SocialMediaController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function toggle(SocialMedia $socialMedia)
+    {
+        $socialMedia->update([
+            'is_active' => !$socialMedia->is_active
+        ]);
+
+        // Check if request wants JSON response
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true, 'is_active' => $socialMedia->is_active]);
+        }
+
+        return redirect()
+            ->route('admin.social-media.index')
+            ->with('success', 'Status social media berhasil diperbarui.');
+    }
 }

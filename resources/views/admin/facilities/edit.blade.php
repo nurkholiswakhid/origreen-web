@@ -113,6 +113,59 @@
             @csrf
             @method('PUT')
 
+            <!-- Pilihan Tampilan -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100">
+                <label class="block text-sm font-medium text-gray-700 mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-images text-primary mr-2"></i>
+                        <span>Pilih Tampilan Utama</span>
+                        <span class="text-red-500 ml-1">*</span>
+                    </div>
+                    <span class="text-gray-500 text-xs block mt-1">Pilih salah satu untuk tampilan utama fasilitas/wahana</span>
+                </label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Foto -->
+                    <label class="block p-4 bg-white border-2 rounded-xl cursor-pointer hover:border-primary/80 hover:shadow-md transition-all group">
+                        <div class="flex items-center">
+                            <div class="shrink-0">
+                                <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition">
+                                    <i class="fas fa-camera text-primary text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-grow">
+                                <div class="flex items-center">
+                                    <input type="radio" name="display_type" value="image"
+                                        class="text-primary focus:ring-primary mr-2"
+                                        {{ old('display_type', $facility->display_type) === 'image' ? 'checked' : '' }}>
+                                    <span class="text-sm font-medium text-gray-900">Tampilkan dengan Foto</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Upload foto untuk tampilan yang lebih menarik</p>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Icon -->
+                    <label class="block p-4 bg-white border-2 rounded-xl cursor-pointer hover:border-primary/80 hover:shadow-md transition-all group">
+                        <div class="flex items-center">
+                            <div class="shrink-0">
+                                <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition">
+                                    <i class="fas fa-icons text-primary text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-grow">
+                                <div class="flex items-center">
+                                    <input type="radio" name="display_type" value="icon"
+                                        class="text-primary focus:ring-primary mr-2"
+                                        {{ old('display_type', $facility->display_type) === 'icon' ? 'checked' : '' }}>
+                                    <span class="text-sm font-medium text-gray-900">Tampilkan dengan Icon</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Pilih icon yang mewakili fasilitas/wahana ini</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <!-- Input Nama dan Deskripsi -->
             <div class="grid grid-cols-1 gap-6 bg-gray-50 p-6 rounded-xl mb-6 border border-gray-100">
                 <div>

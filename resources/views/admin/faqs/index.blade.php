@@ -124,57 +124,175 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+    .sortable-ghost {
+        opacity: 0.5 !important;
+        background-color: #eff6ff !important;
+    }
+    .sortable-drag {
+        background-color: #dbeafe !important;
+    }
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var el = document.getElementById('sortable-faqs');
-    var sortable = new Sortable(el, {
+    console.log('Initializing FAQ drag and drop...');
+    
+    const sortableContainer = document.getElementById('sortable-faqs');
+    
+    if (!sortableContainer) {
+        console.error('Sortable container not found');
+        return;
+    }
+
+    console.log('Found sortable container:', sortableContainer);
+
+    let sortable = new Sortable(sortableContainer, {
         animation: 150,
         handle: '.cursor-move',
-        ghostClass: 'bg-gray-100',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        forceFallback: false,
+        direction: 'vertical',
+        
+        onStart: function(evt) {
+            console.log('Drag started on:', evt.item.dataset.id);
+        },
+        
         onEnd: function(evt) {
-            const items = [...evt.to.children].map((tr, index) => ({
-                id: tr.dataset.id,
-                order: index + 1
-            }));
-
-            // Perbarui tampilan urutan
-            items.forEach(item => {
-                const tr = document.querySelector(`tr[data-id="${item.id}"]`);
-                const orderSpan = tr.querySelector('td:nth-child(2) span');
-                orderSpan.textContent = item.order;
+            console.log('Drag ended');
+            
+            // Ambil semua items dan update urutan
+            const items = [];
+            const rows = document.querySelectorAll('#sortable-faqs tr[data-id]');
+            console.log('Total rows:', rows.length);
+            
+            rows.forEach((tr, index) => {
+                const id = tr.dataset.id;
+                const order = index + 1;
+                console.log(`Row ${index}: ID=${id}, Order=${order}`);
+                items.push({
+                    id: id,
+                    order: order
+                });
             });
 
+            console.log('Items to send:', items);
+
+            // Tampilkan loading dengan notif yang lebih simple
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loading-notification';
+            loadingDiv.className = 'bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6 flex items-center gap-2';
+            loadingDiv.innerHTML = `
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Menyimpan perubahan urutan...</span>
+            `;
+            
+            const alertContainer = document.querySelector('main .p-6');
+            if (alertContainer) {
+                alertContainer.insertBefore(loadingDiv, alertContainer.firstChild);
+            }
+
             // Kirim data ke server
-            fetch('{{ route('admin.faqs.reorder') }}', {
+            const reorderUrl = '{{ route('admin.faqs.reorder') }}';
+            console.log('Sending to URL:', reorderUrl);
+            
+            fetch(reorderUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify({ items })
+                body: JSON.stringify({ items: items })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil!',
-                        text: 'Urutan FAQ berhasil diperbarui',
-                        showConfirmButton: false,
-                        timer: 1500
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        console.error('Error response:', text);
+                        throw new Error(`HTTP ${response.status}: ${text}`);
                     });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success response:', data);
+                
+                if (data.success) {
+                    // Update tampilan urutan di tabel
+                    items.forEach(item => {
+                        const tr = document.querySelector(`tr[data-id="${item.id}"]`);
+                        if (tr) {
+                            const orderCells = tr.querySelectorAll('td');
+                            if (orderCells.length > 1) {
+                                orderCells[1].innerHTML = `<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg font-medium">${item.order}</span>`;
+                                console.log(`Updated order for ID ${item.id} to ${item.order}`);
+                            }
+                        }
+                    });
+
+                    // Tampilkan notifikasi sukses yang sama seperti edit success
+                    const successDiv = document.createElement('div');
+                    successDiv.className = 'bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6';
+                    successDiv.setAttribute('role', 'alert');
+                    successDiv.innerHTML = `
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle"></i>
+                            <p><strong>Berhasil!</strong> Urutan FAQ berhasil diperbarui</p>
+                        </div>
+                    `;
+                    
+                    const mainContainer = document.querySelector('main .p-6');
+                    if (mainContainer) {
+                        const existingAlert = mainContainer.querySelector('#loading-notification');
+                        if (existingAlert) {
+                            existingAlert.replaceWith(successDiv);
+                        } else {
+                            mainContainer.insertBefore(successDiv, mainContainer.firstChild);
+                        }
+                    }
+
+                    // Auto-hide notifikasi setelah 3 detik
+                    setTimeout(() => {
+                        successDiv.style.transition = 'opacity 0.3s ease-out';
+                        successDiv.style.opacity = '0';
+                        setTimeout(() => successDiv.remove(), 300);
+                    }, 3000);
+                } else {
+                    throw new Error(data.message || 'Gagal memperbarui urutan');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Terjadi kesalahan saat memperbarui urutan'
-                });
+                console.error('Full error:', error);
+                
+                // Tampilkan notifikasi error yang sama seperti error success
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6';
+                errorDiv.setAttribute('role', 'alert');
+                errorDiv.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p><strong>Gagal!</strong> ${error.message}</p>
+                    </div>
+                `;
+                
+                const mainContainer = document.querySelector('main .p-6');
+                if (mainContainer) {
+                    const existingAlert = mainContainer.querySelector('#loading-notification');
+                    if (existingAlert) {
+                        existingAlert.replaceWith(errorDiv);
+                    } else {
+                        mainContainer.insertBefore(errorDiv, mainContainer.firstChild);
+                    }
+                }
             });
         }
     });
+
+    console.log('Sortable initialized');
 
     // Handle delete buttons
     document.querySelectorAll('.delete-btn').forEach(button => {
@@ -185,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             Swal.fire({
                 title: 'Hapus FAQ?',
-                text: `Apakah Anda yakin ingin menghapus FAQ ini?`,
+                text: `Apakah Anda yakin ingin menghapus: "${question}"?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
@@ -197,8 +315,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     form.submit();
                 }
             });
-        }
+        });
     });
+
+    // Handle search/filter
+    const searchInput = document.getElementById('searchFAQ');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('#sortable-faqs tr[data-id]').forEach(row => {
+                const questionCell = row.querySelector('td:nth-child(3)');
+                if (questionCell) {
+                    const isVisible = questionCell.textContent.toLowerCase().includes(searchTerm);
+                    row.style.display = isVisible ? '' : 'none';
+                }
+            });
+        });
+    }
 });
 </script>
 @endpush
